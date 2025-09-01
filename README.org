@@ -1,0 +1,43 @@
+#+title: Moonli - Algol-style syntax that transpiles to Common Lisp
+
+#+begin_quote
+Status: Explorative (pre-experimental). It is NOT ready for use in any project, not even if it is a throwaway project.
+#+end_quote
+
+* What
+
+This is a syntax layer that transpiles to Common Lisp.
+
+#+begin_src 
+begin defun ADD(&REST, ARGS):
+  begin if NULL(ARGS)
+  then 0
+  else FIRST(ARGS) + ADD(REST(ARGS))
+  end if
+end defun
+#+end_src
+
+transpiles to:
+
+#+begin_src lisp
+(defun add (&rest args)
+  (if (null args)
+      0
+      (+ (first args)
+         (add (rest args)))))
+#+end_src
+
+* Why
+
+I love s-expression based syntaxes of lisps, particularly because of tools like [[http://danmidwood.com/content/2014/11/21/animated-paredit.html][paredit]] and [[https://github.com/abo-abo/lispy][lispy]], as well as [[https://lispcookbook.github.io/cl-cookbook/macros.html][macros]]. But I also acknowledge not every one has the time or patience to become comfortable with them, especially when it comes to reading code.
+
+I also love [[https://common-lisp.net/][Common Lisp]] for [[https://www.quora.com/What-is-your-favourite-non-mainstream-programming-language/answer/Shubhamkar-Ayare][reasons beyond macros]].
+
+Yet, in the 21st century, it is a fact that very many more people are familiar with python, matlab and julia than they are with lisps. Given the power and flexibility of common lisp, my ambitious plan is to get all mainstream languages to transpile to common lisp. The more realistic plan is to create and maintain the "Moonli" syntax layer in this repository.
+
+* Plans
+
+[] Add more forms: defpackage, progn, mvb, dsb, let+, more...
+[] Add more tests
+[] Reverse transpile from common lisp
+

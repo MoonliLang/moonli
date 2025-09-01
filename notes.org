@@ -1,0 +1,218 @@
+#+title: Notes
+
+* Notes
+
+A simple parser cannot work because it cannot distinguish between a variable, a function call, and array indexing.
+
+We also want the approach to be context free.
+
+Do we want the language to be extensible? Or do we not? Suppose we make it non-extensible. Then, someone will certainly make it extensible and create fragmentation. To avoid this, we must make it extensible. Each file can start with the name of the readtable? Or the package? Remember we wanted to tie packages to the readtables. This would be a nice impetus.
+
+** Parsing Expression Grammars
+
+https://stackoverflow.com/questions/24773462/how-does-backtracking-work-in-peg-js-with-example
+
+While PEGs are theoretically powerful, it seems new developers might need to twist their heads in trying to work with a PEG-based parser.
+
+** Julia
+
+The best advantage of Julia would be if a parser was readily available. Unfortunately, while the parser is available, it expands into julia core forms which make no space for common lisp special forms.
+
+** Lua
+
+https://github.com/Robert-van-Engelen/lua-to-lisp
+
+While this exists, lua does not have an extensible syntax.
+
+** Standard ML
+
+Does not seem to provide an indexing operator.
+
+** Dylan
+
+Does not make a distinction between types and classes; thereby, it does not support higher ordered types.
+
+** Rhombus
+
+https://docs.racket-lang.org/rhombus/index.html
+
+Might be overcomplicated and doesn't seem to lend itself to easy transpilation:
+
+- https://www.reddit.com/r/lisp/comments/1aw7jim/rhombus_a_new_spin_on_macros_without_all_the/
+- https://beautifulracket.com/appendix/thoughts-on-rhombus.html
+
+
+** Arbitrary
+
+The arbitrary way to parse moonli would be to have a ~read-moonli-expression~ function that -- reads in moonli expressions.
+
+It is helpful to have a ~read-moonli-token~ function that reads in everything except whitespace. However, consider the following:
+
+#+begin_src
+array[idx]
+make_array(10, 2)
+#+end_src
+
+Here, we would like the tokens to be ~array [ idx ]~ and ~make_array ( 10 , 2 )~ which do not necessarily depend on whitespace separation.
+
+But suppose, we want to allow changes to readtable. How then should the reader be written? Basically, it seems that allowing arbitrary changes to the readtable would be a can of worms.
+
+~read-moonli-token~ would then return two values: the token as a string, and whether it is a delimiter or a literal. If this is universal, then it can be done using esrap.
+
+Once the code is converted from pure text to a sequence containing delimiters and literals, it can be worked upon by "expression parsers". Expression parsers are meant to be extensible. These dispatch on a toplevel token and optionally additional tokens, and return (i) lisp expression corresponding to the consumed tokens (ii) the remaining token sequence. Can parsers fail?
+
+When there is nothing to dispatch upon, a default expression parser is utilized.
+
+A default expression parser defines the following:
+- variables
+- symbols
+- array indexing
+- function calls
+- numbers
+- mathematical expressions and infix operations
+- lists
+- vectors
+- dictionaries, sets
+- assignments
+
+* Syntax Definition
+
+#+begin_src lisp
+(define-moonli-syntax ...)
+#+end_src
+
+* Syntax Examples
+
+** ASD Files - YAML syntax
+
+Example Lisp ASD definition
+
+#+begin_src lisp
+(defsystem "my-project"
+  :depends-on ("alexandria"
+               "iterate")
+  :components ((:file "package")
+               (:file "utilities")
+               (:file "main"))
+  :in-order-to ((test-op (test-op "my-project/tests"))))
+
+(defsystem "my-project/tests"
+  :depends-on ("fiveam"
+               "my-project")
+  :components (:file "tests")
+  :perform (test-op (o c)
+              (eval (read-from-string "(5AM:RUN! :MY-PROJECT)"))))
+#+end_src
+
+Example Moonli ASD definition
+
+#+begin_src
+defsystem "my-project"
+- depends_on:
+  - "alexandria"
+  - "iterate"
+- components:
+  - :file "package"    # because there are multiple items,
+  - :file "utilities"  # they can be grouped into a list
+  - :file "main"
+- in_order_to:
+  - test-op: test-op "my-project/tests"
+
+defsystem "my-project/tests"
+- depends_on
+  - "fiveam"
+  - "my-project"
+- components
+  - :file "tests"
+- perform
+  - test_op(o, c): # FIXME: Would this support arbitrary syntax?
+      eval(read_from_string("(5AM:RUN! :MY-PROJECT)"))
+#+end_src
+
+** Grammar
+
+#+begin_src
+expr : atom | atom expr
+
+atom : name | number | character | string | symbol | list | vector | custom-hash-table | custom-set | expr op expr
+
+string : "..."
+
+list : (expr, expr, ...)
+
+vector: [expr, ]
+
+symbol: $name
+
+name: (a-zA-Z_)(a-zA-Z0-9_)*
+
+op: ... extensible ...
+
+#+end_src
+
+** defun
+
+#+begin_src lisp
+(defun add (x y) (+ x y))
+(defun fib (n)
+  (if (<= n 1)
+      1
+      (+ (fib (- n 1))
+         (fib (- n 2)))))
+#+end_src
+
+#+begin_src
+defun add(x, y):
+  x+y
+end defun
+# defun add(x, y) = x + y
+
+defun fib(n):
+  if (n <= 1):
+    1
+  else:
+    fib(n-1) + fib(n-2)
+  end
+end defun
+#+end_src
+
+** let
+
+#+begin_src lisp
+(defun fib (n)
+  (let ((n1 0)
+        (n2 1))
+    (dotimes (i n)
+      (let ((tmp n1))
+        (setf n1 n2
+              n2 (+ tmp n2))))
+    n2))
+#+end_src
+
+#+begin_src
+defun fib(n)
+  let n1=0, n2=0:
+    dotimes i:n
+      let tmp = n1:
+        n1 = n2
+        n2 = tmp + n2
+      endlet
+  endlet
+  n2
+endfun
+#+end_src
+
+** destructuring-bind
+
+#+begin_src lisp
+(defun add-3-list (3-list)
+  (destructuring-bind (a b c) 3-list
+     (+ a b c)))
+#+end_src
+
+#+begin_src
+defun add-3-list(3-list):
+  destructuring-bind a, b, c = 3-list;
+  a + b + c
+end
+#+end_src
