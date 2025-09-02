@@ -1,0 +1,10 @@
+
+
+defvar foo $abc;
+PRINT(*PACKAGE*)
+PRINT(foo)
+FORMAT(T, "Hello! ~S:~A~%", $foo, foo)
+
+begin let a = 1:
+  a
+end let

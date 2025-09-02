@@ -27,6 +27,8 @@ transpiles to:
          (add (rest args)))))
 #+end_src
 
+See [[./moonli-sample.asd]] and [[./sample.moonli]] to include in your project.
+
 * Why
 
 I love s-expression based syntaxes of lisps, particularly because of tools like [[http://danmidwood.com/content/2014/11/21/animated-paredit.html][paredit]] and [[https://github.com/abo-abo/lispy][lispy]], as well as [[https://lispcookbook.github.io/cl-cookbook/macros.html][macros]]. But I also acknowledge not every one has the time or patience to become comfortable with them, especially when it comes to reading code.
