@@ -36,7 +36,7 @@
   (:function (lambda (expr)
                (with-output-to-string (s)
                  (dolist (elt (second expr))
-                   (etypecase (print elt)
+                   (etypecase elt
                      (character (write-char elt s))
                      (cons
                       (assert (and (null (cddr elt))

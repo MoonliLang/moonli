@@ -38,7 +38,8 @@
 (esrap:defrule numeric-character (esrap:character-ranges (#\0 #\9)))
 
 (esrap:defrule non-symbol-chars
-    (or #\| #\: #\, #\$ #\' #\" infix-operator whitespace open-bracket close-bracket))
+    (or #\| #\: #\, #\$ #\' #\" open-bracket close-bracket
+        whitespace/internal whitespace/end))
 
 (esrap:defrule infix-operator
     (and (or "==" "=" "+" "-" "*" "/" "^") +whitespace/internal)
