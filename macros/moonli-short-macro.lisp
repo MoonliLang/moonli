@@ -15,7 +15,7 @@
    (value moonli-expression))
   `(defparameter ,name ,value))
 
-(define-moonli-short-macro |package|
+(define-moonli-short-macro |in-package|
   ((name symbol))
   `(in-package ,name))
 
