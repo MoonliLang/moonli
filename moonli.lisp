@@ -23,7 +23,7 @@
       (format out ";;; Do NOT edit by hand. It will be overwritten.~%")
       (format out ";;; Edit or Replace the corrsponding .moonli file instead!~%~%")
       (dolist (form (cdr target))
-        (write form :stream out)
+        (write form :stream out :case :downcase)
         (terpri out)
         (terpri out)))
     (format *standard-output* "; wrote ~A~%" (namestring target-file))

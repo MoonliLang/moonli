@@ -1,5 +1,19 @@
 (in-package :moonli)
 
+(defun string-invert-case (string)
+  (declaim (optimize speed))
+  (let ((copy-text (copy-seq string)))
+    (loop :for pos :below (length copy-text)
+          :for char := (char copy-text pos)
+          :do (setf (char copy-text pos)
+                    (cond ((lower-case-p char)
+                           (char-upcase char))
+                          ((upper-case-p char)
+                           (char-downcase char))
+                          (t
+                           char))))
+    copy-text))
+
 (esrap:defrule simple-symbol
     (or (and #\|
              (+ (or (and #\\ #\|)
@@ -10,7 +24,8 @@
                  #\*
                  #\-)
              (* (not non-symbol-chars))))
-  (:text t))
+  (:text t)
+  (:function string-invert-case))
 
 (esrap:defrule symbol
     (or (and #\: simple-symbol)

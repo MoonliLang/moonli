@@ -29,7 +29,7 @@
                                          (nth 6 expr)))
                                  (second expr)))))))
 
-(define-moonli-macro |let|
+(define-moonli-macro let
 
   ((let-bindings let-bindings)
    (_ #\:)
@@ -38,16 +38,16 @@
   `(let ,let-bindings
      ,@(rest let-body)))
 
-(5am:def-test |let| ()
+(5am:def-test let ()
   (5am:is (equal `(let ((a 2) (b 3))
                     (+ a b))
                  (esrap:parse 'macro-call
-                              "begin let A = 2, B = 3:
-   A + B
+                              "begin let a = 2, b = 3:
+   a + b
 end let"))))
 
 
-(define-moonli-macro |if|
+(define-moonli-macro if
   ((condition moonli-expression)
    (_ *whitespace)
    (_ "then")
@@ -60,34 +60,34 @@ end let"))))
   `(if ,condition ,then-part ,else-part))
 
 
-(5am:def-test |if| ()
+(5am:def-test if ()
   (5am:is (equal `(if a b c)
-                 (esrap:parse 'macro-call "begin if A
-then B
-else C
+                 (esrap:parse 'macro-call "begin if a
+then b
+else c
 end if")))
   (5am:is (equal `(the boolean (if a b c))
                  (esrap:parse 'moonli-expression
-                              "(begin if A
-then B
-else C
-end if)::BOOLEAN")))
+                              "(begin if a
+then b
+else c
+end if)::boolean")))
   (5am:is (equal `(if (null args)
                       0
                       1)
-                 (esrap:parse 'macro-call "begin if NULL(ARGS) then 0 else 1 end if")))
+                 (esrap:parse 'macro-call "begin if null(args) then 0 else 1 end if")))
   (5am:is (equal `(if (null args)
                       0
                       (first args))
-                 (esrap:parse 'macro-call "begin if NULL(ARGS) then
+                 (esrap:parse 'macro-call "begin if null(args) then
     0
-    else FIRST(ARGS)
+    else first(args)
 end if")))
 
   (5am:is (equal `(if (null args)
                       0
                       (+ 2 3))
-                 (esrap:parse 'macro-call "begin if NULL(ARGS)
+                 (esrap:parse 'macro-call "begin if null(args)
 then 0
 else 2 + 3
 end if")))
@@ -95,12 +95,12 @@ end if")))
                       0
                       (+ (first args)
                          (add (rest args))))
-                 (esrap:parse 'macro-call "begin if NULL(ARGS)
+                 (esrap:parse 'macro-call "begin if null(args)
 then 0
-else FIRST(ARGS) + ADD(REST(ARGS))
+else first(args) + add(rest(args))
 end if"))))
 
-(define-moonli-macro |defun|
+(define-moonli-macro defun
   ((name good-symbol)
    (_ *whitespace)
    (lambda-list list)
@@ -109,10 +109,10 @@ end if"))))
   `(defun ,name ,(rest lambda-list) ,@(rest body)))
 
 
-(5am:def-test |defun| ()
+(5am:def-test defun ()
   (5am:is (equal `(defun add (&rest args) args)
-                 (esrap:parse 'macro-call "begin defun ADD (&REST, ARGS):
- ARGS
+                 (esrap:parse 'macro-call "begin defun add (&rest, args):
+ args
 end defun")))
   (5am:is (equal `(progn
                     (defun add (&rest args)
@@ -121,10 +121,10 @@ end defun")))
                           (+ (first args)
                              (add (rest args))))))
                  (esrap:parse 'moonli "
-begin defun ADD(&REST, ARGS):
-  begin if NULL(ARGS)
+begin defun add(&rest, args):
+  begin if null(args)
   then 0
-  else FIRST(ARGS) + ADD(REST(ARGS))
+  else first(args) + add(rest(args))
   end if
 end defun
 "))))
@@ -154,7 +154,7 @@ end defun
                                (mapcar #'third (third args)))
                          (mapcar #'second args))))))))
 
-(define-moonli-macro |defpackage|
+(define-moonli-macro defpackage
   ((name string-designator)
    (_ *whitespace)
    (options (* defpackage-option)))
