@@ -4,6 +4,7 @@
                "parse-number"
                "optima"
                "fiveam")
+  :serial t
   :components ((:file "package")
                (:module "parser"
                 :components ((:file "basic")

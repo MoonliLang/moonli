@@ -1,6 +1,7 @@
 (defpackage :moonli
   (:use :cl)
   (:export #:moonli
+           #:moonli-expression
            #:compile-moonli-file
            #:load-moonli-file
            #:define-moonli-macro

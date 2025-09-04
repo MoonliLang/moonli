@@ -2,9 +2,6 @@
 
 (5am:in-suite :moonli)
 
-;; (esrap:! (or (and "begin" +whitespace)
-;;                       (and "end" +whitespace)))
-
 (esrap:defrule atomic-expression
     (or character-literal
         string-literal

@@ -5,13 +5,13 @@
 
 (define-moonli-short-macro defvar
   ((name good-symbol)
-   (_ whitespace/internal)
+   (_ +whitespace/internal)
    (value moonli-expression))
   `(defvar ,name ,value))
 
 (define-moonli-short-macro defparameter
   ((name good-symbol)
-   (_ whitespace/internal)
+   (_ +whitespace/internal)
    (value moonli-expression))
   `(defparameter ,name ,value))
 

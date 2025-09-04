@@ -44,6 +44,7 @@ Yet, in the 21st century, it is a fact that very many more people are familiar w
 - Case sensitive, but invert-case reader to maintain common lisp compatibility
 - Transpile to common lisp, so lispers need not "learn a new language"
 - Extensible using =moonli:define-moonli-macro= and =moonli:define-short-moonli-macro=. See [[./macros/]] directory for examples.
+- Inability to access internal symbols of another package through "A::B" syntax; this syntax rather translates to =(the B A)=
 
 ** For programmers in general
 
@@ -53,10 +54,20 @@ Yet, in the 21st century, it is a fact that very many more people are familiar w
 - Optional typing, optional dynamic scoping
 - Availability of optimizing compilers such as SBCL
 - Sensitive to newlines and semicolons but not to spaces and tabs (indentation insensitive)
+- Returning multiple values without an intermediate data structure
+- Support for rapid prototyping through CLOS and image-based development
 
-* Plans
+* Plan
 
+- DONE Real numbers, strings, characters, lists, infix arithmetic operators
+- DONE Typing using "expr::type" operator
+- TODO Support for declare and declaim
+- TODO Literal syntax for hash-tables, vectors, array access
+- TODO BODMAS rule for parsing expressions
+- TODO Emacs mode and integration with slime
+- TODO Infix Logical operators
 - TODO Add more forms: progn, mvb, dsb, let+, more...
 - TODO Add more tests
 - TODO Reverse transpile from common lisp
+
 
