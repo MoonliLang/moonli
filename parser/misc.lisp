@@ -77,15 +77,15 @@
   (5am:is (equal '(list 3)
                  (esrap:parse 'list "(3,)")))
   (5am:is (equal '(list 3 :hello)
-                 (esrap:parse 'list "(3,:HELLO)")))
+                 (esrap:parse 'list "(3,:hello)")))
   (5am:is (equal '(list 3 :hello)
-                 (esrap:parse 'list "(3, :HELLO)")))
+                 (esrap:parse 'list "(3, :hello)")))
   (5am:is (equal '(list 3 :hello)
-                 (esrap:parse 'list "(3, :HELLO )")))
+                 (esrap:parse 'list "(3, :hello )")))
   (5am:is (equal '(list 3 :hello)
-                 (esrap:parse 'list "(3, :HELLO, )")))
+                 (esrap:parse 'list "(3, :hello, )")))
   (5am:is (equal '(list 3 (null a))
-                 (esrap:parse 'list "(3,NULL(A))"))))
+                 (esrap:parse 'list "(3,null(a))"))))
 
 (esrap:defrule function-call
     ;; Don't put a whitespace

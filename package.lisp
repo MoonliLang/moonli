@@ -1,9 +1,7 @@
 (defpackage :moonli
   (:use :cl)
-  ;; (:import-from #:string-atom-tries
-  ;;               #:make-string-atom-trie)
-  ;; (:local-nicknames (#:tries #:string-atom-tries))
-  (:export #:compile-moonli-file
+  (:export #:moonli
+           #:compile-moonli-file
            #:load-moonli-file
            #:define-moonli-macro
            #:define-moonli-short-macro))

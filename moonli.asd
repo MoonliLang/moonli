@@ -15,4 +15,6 @@
                (:module "macros"
                 :components ((:file "moonli-macro")
                              (:file "moonli-short-macro")))
-               (:file "moonli")))
+               (:file "moonli"))
+  :perform (test-op (c s)
+             (eval (read-from-string "(5AM:RUN! :MOONLI)"))))

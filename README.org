@@ -9,10 +9,10 @@ Status: Explorative (pre-experimental). It is NOT ready for use in any project, 
 This is a syntax layer that transpiles to Common Lisp.
 
 #+begin_src 
-begin defun ADD(&REST, ARGS):
-  begin if NULL(ARGS)
+begin defun add(&rest, args):
+  begin if null(args)
   then 0
-  else FIRST(ARGS) + ADD(REST(ARGS))
+  else first(args) + add(rest(args))
   end if
 end defun
 #+end_src
@@ -37,9 +37,26 @@ I also love [[https://common-lisp.net/][Common Lisp]] for [[https://www.quora.co
 
 Yet, in the 21st century, it is a fact that very many more people are familiar with python, matlab and julia than they are with lisps. Given the power and flexibility of common lisp, my ambitious plan is to get all mainstream languages to transpile to common lisp. The more realistic plan is to create and maintain the "Moonli" syntax layer in this repository.
 
+* Features
+
+** For lispers
+
+- Case sensitive, but invert-case reader to maintain common lisp compatibility
+- Transpile to common lisp, so lispers need not "learn a new language"
+- Extensible using =moonli:define-moonli-macro= and =moonli:define-short-moonli-macro=. See [[./macros/]] directory for examples.
+
+** For programmers in general
+
+- Sane variable scoping rules as given by common lisp
+- Sane namespace scoping thanks to common lisp package system
+- Sane restarts and condition system thanks to common lisp
+- Optional typing, optional dynamic scoping
+- Availability of optimizing compilers such as SBCL
+- Sensitive to newlines and semicolons but not to spaces and tabs (indentation insensitive)
+
 * Plans
 
-[] Add more forms: defpackage, progn, mvb, dsb, let+, more...
-[] Add more tests
-[] Reverse transpile from common lisp
+- TODO Add more forms: progn, mvb, dsb, let+, more...
+- TODO Add more tests
+- TODO Reverse transpile from common lisp
 
