@@ -43,6 +43,9 @@
                                    (string= "\\" (first elt))))
                       (write-string (second elt) s))))))))
 
+(esrap:defrule string-designator
+    (or string-literal symbol))
+
 (esrap:defrule list
     (or (and #\( *whitespace #\))
         (and #\(

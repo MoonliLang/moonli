@@ -129,8 +129,33 @@ begin defun ADD(&REST, ARGS):
 end defun
 "))))
 
+(esrap:defrule defpackage-option
+    (and string-designator
+         *whitespace
+         (esrap:? (or (and string-designator
+                           *whitespace
+                           (* (and #\,
+                                   *whitespace
+                                   string-designator
+                                   *whitespace)))
+                      (+ (and *whitespace
+                              string-designator
+                              *whitespace
+                              #\,
+                              *whitespace))))
+         #\;
+         *whitespace)
+  (:function (lambda (expr)
+               (optima:ematch expr
+                 ((list option-name _ args _ _)
+                  `(,(intern (string-upcase option-name) :keyword)
+                    ,(if (null (nthcdr 3 args)) ; length=3, first option
+                         (cons (first args)
+                               (mapcar #'third (third args)))
+                         (mapcar #'second args))))))))
 
-;; (define-moonli-macro defpackage
-;;   ((name (or good-symbol string-literal))
-;;    (options defpackage-options))
-;;   `(defpackage ,name ,@options))
+(define-moonli-macro |defpackage|
+  ((name string-designator)
+   (_ *whitespace)
+   (options (* defpackage-option)))
+  `(defpackage ,name ,@options))
