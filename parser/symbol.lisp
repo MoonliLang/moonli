@@ -41,6 +41,7 @@
                   (intern symbol-name))))))
 
 (defun good-symbol-p (symbol)
-  (not (member symbol '(begin end true false) :test #'string-equal)))
+  (not (member symbol '(begin end true false elif then else)
+               :test #'string-equal)))
 
 (esrap:defrule good-symbol (good-symbol-p symbol))
