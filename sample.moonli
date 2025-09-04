@@ -1,9 +1,14 @@
+begin defpackage :moonli-sample
+  use :cl;
+  export foo; 
+end defpackage
 
+in-package :moonli-sample
 
 defvar foo $abc;
-PRINT(*PACKAGE*)
-PRINT(foo)
-FORMAT(T, "Hello! ~S:~A~%", $foo, foo)
+print(*package*)
+print(foo)
+format(t, "hello! ~s:~a~%", $foo, foo)
 
 begin let a = 1:
   a

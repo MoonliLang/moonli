@@ -2,14 +2,20 @@
 ;;; Do NOT edit by hand. It will be overwritten.
 ;;; Edit or Replace the corrsponding .moonli file instead!
 
-(DEFVAR |foo| '|abc|)
+(defpackage :moonli-sample
+  (:use :cl)
+  (:export foo))
 
-(PRINT *PACKAGE*)
+(in-package :moonli-sample)
 
-(PRINT |foo|)
+(defvar foo 'abc)
 
-(FORMAT T "Hello! ~S:~A~%" '|foo| |foo|)
+(print *package*)
 
-(LET ((|a| 1))
-  |a|)
+(print foo)
+
+(format t "hello! ~s:~a~%" 'foo foo)
+
+(let ((a 1))
+  a)
 
