@@ -4,9 +4,13 @@
   (:use))
 
 (defvar *moonli-macro-functions* (make-hash-table))
-
 (defun expand-moonli-macro (expression)
   (funcall (car (gethash (first expression) *moonli-macro-functions*))
+           (rest expression)))
+
+(defvar *moonli-short-macro-functions* (make-hash-table))
+(defun expand-moonli-short-macro (expression)
+  (funcall (car (gethash (first expression) *moonli-short-macro-functions*))
            (rest expression)))
 
 (defun namep-symbol (name)
@@ -58,7 +62,7 @@
       `(progn
          (defun ,namep (,symbol) (eq ,symbol ',name))
          (destructuring-bind (&optional ,fn &rest ,idx)
-             (gethash ',name *moonli-macro-functions*)
+             (gethash ',name *moonli-short-macro-functions*)
            (let* ((,expr (esrap:rule-expression
                           (esrap:find-rule 'short-macro-call)))
                   (,subexpr ,expr)
@@ -70,7 +74,7 @@
                        (nconc (cdr ,subexpr)
                               (list ',macro-rule))))
              (esrap:change-rule 'short-macro-call ,expr)
-             (setf (gethash ',name *moonli-macro-functions*)
+             (setf (gethash ',name *moonli-short-macro-functions*)
                    (cons (lambda (,args)
                            (optima:ematch (rest ,args)
                              ((list ,@(mapcar #'first moonli-macro-bindings))
@@ -104,6 +108,6 @@
                    (lambda (production start end)
                      (declare (ignorable start end))
                      ((lambda (expr)
-                        (expand-moonli-macro expr))
+                        (expand-moonli-short-macro expr))
                       production)))))
 
