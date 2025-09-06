@@ -17,7 +17,19 @@
 
 (define-moonli-short-macro in-package
   ((name symbol))
+  (setf *package* (find-package name))
   `(in-package ,name))
+
+(5am:def-test in-package ()
+  (unwind-protect
+       (progn
+         (make-package "MOONLI/TEST/IN-PACKAGE")
+         (5am:is (eq (find-package "MOONLI/TEST/IN-PACKAGE")
+                     (symbol-package
+                      (alexandria:lastcar
+                       (read-moonli-from-string
+                        "in-package moonli/test/in-package; foo"))))))
+    (delete-package "MOONLI/TEST/IN-PACKAGE")))
 
 (define-moonli-short-macro if
   ((test moonli-expression)

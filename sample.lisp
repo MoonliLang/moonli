@@ -4,7 +4,7 @@
 
 (defpackage :moonli-sample
   (:use :cl)
-  (:export foo))
+  (:export :foo))
 
 (in-package :moonli-sample)
 
@@ -14,7 +14,7 @@
 
 (print foo)
 
-(format t "hello! ~s:~a~%" 'foo foo)
+(format t "hello! ~s: ~a~%" 'foo foo)
 
 (let ((a 1))
   a)

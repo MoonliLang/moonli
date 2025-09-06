@@ -197,4 +197,6 @@ end defun
   ((name string-designator)
    (_ *whitespace)
    (options (* defpackage-option)))
-  `(defpackage ,name ,@options))
+  (let ((form `(defpackage ,name ,@options)))
+    (eval form)
+    form))
