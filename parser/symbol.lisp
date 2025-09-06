@@ -1,7 +1,7 @@
 (in-package :moonli)
 
 (defun string-invert-case (string)
-  (declaim (optimize speed))
+  (declare (optimize speed))
   (let ((copy-text (copy-seq string)))
     (loop :for pos :below (length copy-text)
           :for char := (char copy-text pos)

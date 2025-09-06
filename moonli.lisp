@@ -56,7 +56,6 @@
         (terpri out)
         (terpri out)))
     (format *standard-output* "; wrote ~A~%" (namestring target-file))
-    (format *standard-output* "; compiling file ~A~%" (namestring target-file))
     (asdf:compile-file* target-file :output-file fasl-file)))
 
 #|
