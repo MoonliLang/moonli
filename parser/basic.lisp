@@ -28,6 +28,10 @@
     (* whitespace/end)
   (:constant nil))
 
+(esrap:defrule *whitespace/all
+    (* (or whitespace/end whitespace/internal))
+  (:constant nil))
+
 (esrap:defrule open-bracket
     (and (or #\( #\[ #\{) *whitespace)
   (:function first))
