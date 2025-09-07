@@ -9,12 +9,13 @@ Status: Explorative (pre-experimental). It is NOT ready for use in any project, 
 This is a syntax layer that transpiles to Common Lisp.
 
 #+begin_src 
-begin defun add(&rest, args):
-  begin if null(args)
-  then 0
-  else first(args) + add(rest(args))
-  end if
-end defun
+defun add(&rest, args):
+  if null(args):
+    0
+  else:
+    first(args) + add(rest(args))
+  end
+end
 #+end_src
 
 transpiles to:

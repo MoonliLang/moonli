@@ -4,6 +4,10 @@
     (or #\Space #\Tab)
   (:constant nil))
 
+(esrap:defrule *whitespace/internal
+    (* whitespace/internal)
+  (:constant nil))
+
 (esrap:defrule +whitespace/internal
     (+ whitespace/internal)
   (:constant nil))

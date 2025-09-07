@@ -42,17 +42,24 @@
   (5am:is (equal `(let ((a 2) (b 3))
                     (+ a b))
                  (esrap:parse 'macro-call
-                              "begin let a = 2, b = 3:
+                              "let a = 2, b = 3:
    a + b
-end let"))))
+end")))
+  (5am:is (equal `(let ((a 2) (b 3))
+                    (+ a b))
+                 (esrap:parse 'macro-call
+                              "let a = 2, b = 3:
+   a + b
+end let")
+                 )))
 
 (esrap:defrule elif-clause
     (and *whitespace
          "elif"
          *whitespace
          moonli-expression
-         *whitespace
-         "then"
+         *whitespace/internal
+         ":"
          moonli
          *whitespace)
   (:function (lambda (expr)
@@ -62,11 +69,11 @@ end let"))))
 
 (define-moonli-macro if
   ((condition moonli-expression)
-   (_ (and *whitespace "then" *whitespace))
+   (_ (and *whitespace/internal ":" *whitespace))
    (then-part moonli)
    (_ *whitespace)
    (elif-clauses (* elif-clause))
-   (_ (esrap:? (and *whitespace "else" *whitespace)))
+   (_ (esrap:? (and *whitespace "else" *whitespace/internal ":" *whitespace)))
    (else-part (esrap:? moonli)))
   `(cond (,condition
           ,@(rest then-part))
@@ -77,65 +84,63 @@ end let"))))
 
 (5am:def-test if ()
   (5am:is (equal `(cond (a b) (t))
-                 (esrap:parse 'macro-call "begin if a
-then b
+                 (esrap:parse 'macro-call "if a: b
 end if")))
   (5am:is (equal `(cond (a b c) (t))
-                 (esrap:parse 'macro-call "begin if a
-then b; c
-end if")))
+                 (esrap:parse 'macro-call "if a:
+  b; c
+end")))
   (5am:is (equal `(cond (a b) (t c))
-                 (esrap:parse 'macro-call "begin if a
-then b
-else c
+                 (esrap:parse 'macro-call "if a: b
+else: c
 end if")))
   (5am:is (equal `(cond (a b d) (t c e))
-                 (esrap:parse 'macro-call "begin if a
-then b; d
-else c; e
+                 (esrap:parse 'macro-call "if a:
+   b; d
+else:
+   c; e
 end if")))
   (5am:is (equal `(cond (a b) (c d e) (t f))
-                 (esrap:parse 'macro-call "begin if a
-then b
-elif c then d; e
-else f
+                 (esrap:parse 'macro-call "if a: b
+elif c: d; e
+else: f
 end if")))
   (5am:is (equal `(the boolean (cond (a b) (t c)))
                  (esrap:parse 'moonli-expression
-                              "(begin if a
-then b
-else c
-end if)::boolean")))
+                              "(if a: b else: c; end)::boolean")))
   (5am:is (equal `(cond ((null args)
                          0)
                         (t
                          1))
-                 (esrap:parse 'macro-call "begin if null(args) then 0 else 1 end if")))
+                 (esrap:parse 'macro-call "if null(args): 0; else: 1 end")))
   (5am:is (equal `(cond ((null args)
                          0)
                         (t
                          (first args)))
-                 (esrap:parse 'macro-call "begin if null(args) then
+                 (esrap:parse 'macro-call "if null(args):
     0
-    else first(args)
+else:
+    first(args)
 end if")))
 
   (5am:is (equal `(cond ((null args)
                          0)
                         (t
                          (+ 2 3)))
-                 (esrap:parse 'macro-call "begin if null(args)
-then 0
-else 2 + 3
+                 (esrap:parse 'macro-call "if null(args):
+  0
+else:
+  2 + 3
 end if")))
   (5am:is (equal `(cond ((null args)
                          0)
                         (t
                          (+ (first args)
                             (add (rest args)))))
-                 (esrap:parse 'macro-call "begin if null(args)
-then 0
-else first(args) + add(rest(args))
+                 (esrap:parse 'macro-call "if null(args):
+  0
+else:
+  first(args) + add(rest(args))
 end if"))))
 
 (define-moonli-macro defun
@@ -149,7 +154,7 @@ end if"))))
 
 (5am:def-test defun ()
   (5am:is (equal `(defun add (&rest args) args)
-                 (esrap:parse 'macro-call "begin defun add (&rest, args):
+                 (esrap:parse 'macro-call "defun add (&rest, args):
  args
 end defun")))
   (5am:is (equal `(progn
@@ -160,12 +165,13 @@ end defun")))
                              (+ (first args)
                                 (add (rest args)))))))
                  (esrap:parse 'moonli "
-begin defun add(&rest, args):
-  begin if null(args)
-  then 0
-  else first(args) + add(rest(args))
+defun add(&rest, args):
+  if null(args):
+    0
+  else:
+    first(args) + add(rest(args))
   end if
-end defun
+end
 "))))
 
 (esrap:defrule defpackage-option

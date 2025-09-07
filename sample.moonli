@@ -1,4 +1,4 @@
-begin defpackage :moonli-sample
+defpackage :moonli-sample
   use :cl;
   export :foo;
 end defpackage
@@ -10,6 +10,6 @@ print(*package*)
 print(foo)
 format(t, "hello! ~s: ~a~%", $foo, foo)
 
-begin let a = 1:
+let a = 1:
   a
 end let

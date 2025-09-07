@@ -31,7 +31,7 @@
                         "in-package moonli/test/in-package; foo"))))))
     (delete-package "MOONLI/TEST/IN-PACKAGE")))
 
-(define-moonli-short-macro if
+(define-moonli-short-macro ifelse
   ((test moonli-expression)
    (_ +whitespace/internal)
    (then moonli-expression)
@@ -45,6 +45,6 @@
   (5am:is (equal `(defparameter a 5)
                  (esrap:parse 'short-macro-call "defparameter a 5")))
   (5am:is (equal `(if a 5 nil)
-                 (esrap:parse 'short-macro-call "if a 5")))
+                 (esrap:parse 'short-macro-call "ifelse a 5")))
   (5am:is (equal `(if a :hello :bye)
-                 (esrap:parse 'short-macro-call "if a :hello :bye"))))
+                 (esrap:parse 'short-macro-call "ifelse a :hello :bye"))))
