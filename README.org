@@ -61,6 +61,48 @@ Yet, in the 21st century, it is a fact that very many more people are familiar w
 - Returning multiple values without an intermediate data structure
 - Support for rapid prototyping through CLOS and image-based development
 
+* Installation
+
+** 1. Install SBCL (or CCL or another Common Lisp compiler or interpreter)
+
+*** Mac OS
+
+#+begin_src
+brew install sbcl
+#+end_src
+
+** 2. Install ocicl
+
+*** Mac OS
+
+#+begin_src
+brew install ocicl
+ocicl setup
+#+end_src
+
+Edit the lisp startup file (eg. =~/.sbclrc=) to include the current directory, or
+
+#+begin_src lisp
+#-ocicl
+(when (probe-file #P"/Users/user/.local/share/ocicl/ocicl-runtime.lisp")
+  (load #P"/Users/user/.local/share/ocicl/ocicl-runtime.lisp"))
+(asdf:initialize-source-registry
+  ;; (list :source-registry (list :directory (uiop:getcwd)) :inherit-configuration)
+ (list :source-registry
+       (list :tree (uiop:strcat (uiop:getenv "HOME") "/Common Lisp/"))
+       :inherit-configuration))
+#+end_src
+
+** 3. Install moonli
+
+*** Build REPL
+
+The following should create a =moonli= binary in the root directory of moonli.
+
+#+begin_src lisp
+(asdf:make :moonli-repl)
+#+end_src
+
 * Plan
 
 - DONE Real numbers, strings, characters, lists, infix arithmetic operators
