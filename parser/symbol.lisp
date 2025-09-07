@@ -19,11 +19,7 @@
              (+ (or (and #\\ #\|)
                     (not #\|)))
              #\|)
-        (and (or (alpha-char-p character)
-                 #\&
-                 #\*
-                 #\-)
-             (* (not non-symbol-chars))))
+        (+ (not non-symbol-chars)))
   (:text t)
   (:function string-invert-case))
 
@@ -41,7 +37,7 @@
                   (intern symbol-name))))))
 
 (defun good-symbol-p (symbol)
-  (not (member symbol '(begin end true false elif then else)
+  (not (member symbol '(end true false elif else)
                :test #'string-equal)))
 
 (esrap:defrule good-symbol (good-symbol-p symbol))
