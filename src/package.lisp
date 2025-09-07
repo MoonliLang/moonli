@@ -2,6 +2,7 @@
   (:use :cl)
   (:export #:moonli
            #:moonli-expression
+           #:read-moonli-from-string
            #:compile-moonli-file
            #:load-moonli-file
            #:define-moonli-macro
