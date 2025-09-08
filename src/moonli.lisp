@@ -13,6 +13,12 @@
       (loop :repeat (- end-dist 2) :do (write-char #\-))
       (write-string (subseq string nn)))))
 
+(defun read-moonli-from-stream (stream)
+   (read-moonli-from-string
+     (with-output-to-string (*standard-output*)
+       (loop :while (listen stream)
+          :do (write-char (read-char stream))))))
+
 (defun read-moonli-from-string (string)
   (let ((end (length string))
         (pos 0)
