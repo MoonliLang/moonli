@@ -146,13 +146,19 @@ end if"))))
 (define-moonli-macro defun
   ((name good-symbol)
    (_ *whitespace)
-   (lambda-list list)
+   (lambda-list (or (and #\( *whitespace good-symbol *whitespace #\))
+                    list))
    (_ #\:)
    (body (esrap:? moonli)))
-  `(defun ,name ,(rest lambda-list) ,@(rest body)))
+  `(defun ,name ,(if (eq 'list (first lambda-list))
+                     (rest lambda-list)
+                     `(,(third lambda-list)))
+     ,@(rest body)))
 
 
 (5am:def-test defun ()
+  (5am:is (equal `(defun our-identity (x) x)
+                 (esrap:parse 'macro-call "defun our-identity(x): x end")))
   (5am:is (equal `(defun add (&rest args) args)
                  (esrap:parse 'macro-call "defun add (&rest, args):
  args
