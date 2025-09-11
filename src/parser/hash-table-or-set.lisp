@@ -1,5 +1,7 @@
 (in-package :moonli)
 
+(5am:in-suite :moonli)
+
 (esrap:defrule hash-table-entry
     (and moonli-expression
          *whitespace #\:
