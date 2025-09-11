@@ -105,11 +105,12 @@ The following should create a =moonli= binary in the root directory of moonli.
 
 * Plan
 
-- DONE Real numbers, strings, characters, lists, infix arithmetic operators
+- DONE Real numbers, strings, characters, lists, infix arithmetic operators, literal hash-tables, literal hash-sets
 - DONE Typing using "expr::type" operator
 - TODO Support for declare and declaim
-- TODO Literal syntax for hash-tables, vectors, array access
+- TODO Literal syntax for vectors, array access
 - TODO BODMAS rule for parsing expressions
+- TODO VS Code integration
 - TODO Emacs mode and integration with slime
 - TODO Infix Logical operators
 - TODO Add more forms: progn, mvb, dsb, let+, more...

@@ -16,6 +16,8 @@
         bracketed-expression
         function-call
         list
+        hash-table
+        hash-set
         quoted-expression
         atomic-expression))
 

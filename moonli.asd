@@ -11,6 +11,7 @@
                 :components ((:file "basic")
                              (:file "number")
                              (:file "symbol")
+                             (:file "hash-table-or-set")
                              (:file "macros")
                              (:file "misc")
                              (:file "expressions")))
