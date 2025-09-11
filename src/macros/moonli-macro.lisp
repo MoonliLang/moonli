@@ -143,6 +143,32 @@ else:
   first(args) + add(rest(args))
 end if"))))
 
+
+
+(5am:def-test macros-are-package-local ()
+  (unwind-protect
+       (handler-bind ((warning #'muffle-warning))
+         (make-package "DUMMY")
+         (intern "IF" "DUMMY")
+         (export (find-symbol "IF" "DUMMY") "DUMMY")
+         (eval `(define-moonli-macro ,(find-symbol "IF" "DUMMY")
+                  ((test moonli-expression)
+                   (_ +whitespace/internal)
+                   (then moonli-expression)
+                   (_ +whitespace/internal)
+                   (else moonli-expression))
+                  (list 'if test then else)))
+         (let ((*package* (find-package "DUMMY")))
+           (5am:is (equal `(if "hello" "world" "bye")
+                          (esrap:parse 'macro-call "if \"hello\" \"world\" \"bye\" end"))))
+         (let ((*package* (find-package :moonli)))
+           (5am:is (equal `(cond ("hello" "world") (t "bye"))
+                          (esrap:parse 'macro-call "if \"hello\": \"world\"; else: \"bye\" end")))
+           (5am:is (equal `(if "hello" "world" "bye")
+                          (esrap:parse 'macro-call "dummy:if \"hello\" \"world\" \"bye\" end")))))
+    (if (find-package "DUMMY") (delete-package "DUMMY"))))
+
+
 (define-moonli-macro defun
   ((name good-symbol)
    (_ *whitespace)
