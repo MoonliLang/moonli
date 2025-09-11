@@ -10,6 +10,20 @@ print(*package*)
 print(foo)
 format(t, "hello! ~s: ~a~%", $foo, foo)
 
+defparameter ht = {
+  :a : 2,
+  "b" : 3
+}
+
 let a = 1:
   a
+end let
+
+
+let a = 1:
+  format(
+    t,
+    "a + gethash(:a, ht) + gethash(\"b\", ht) = ~a~%",
+    a + gethash(:a, ht) + gethash("b", ht)
+  )
 end let

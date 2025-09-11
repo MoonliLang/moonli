@@ -2,6 +2,20 @@
 
 (5am:in-suite :moonli)
 
+(defmacro fill-hash-table (&rest key-value-pairs)
+  (let ((ht (gensym "HASH-TABLE")))
+    (if (null key-value-pairs)
+        `(make-hash-table :test #'equal)
+        `(let ((,ht (make-hash-table
+                     :test #'equal
+                     :size ,(length key-value-pairs))))
+           (setf ,@(alexandria:mappend
+                    (lambda (key-value)
+                      (destructuring-bind (key value) key-value
+                        `((gethash ,key ,ht) ,value)))
+                    key-value-pairs))
+           ,ht))))
+
 (esrap:defrule hash-table-entry
     (and moonli-expression
          *whitespace #\:
@@ -22,73 +36,35 @@
                      *whitespace #\,))
              #\}))
   (:function (lambda (expr)
-               (let ((ht (gensym "HASH-TABLE"))
-                     (key-value-pairs
+               (let ((key-value-pairs
                        (if (null (cdddr expr)) ; length = 3, first or last
                            (mapcar #'second (second expr))
                            (cons (third expr) ; middle
                                  (mapcar #'third (fifth expr))))))
-                 (if (null key-value-pairs)
-                     `(make-hash-table :test #'equal)
-                     `(let ((,ht (make-hash-table
-                                  :test #'equal
-                                  :size ,(length key-value-pairs))))
-                        (setf ,@(alexandria:mappend
-                                 (lambda (key-value)
-                                   (destructuring-bind (key value) key-value
-                                     `((gethash ,key ,ht) ,value)))
-                                 key-value-pairs))
-                        ,ht))))))
+                 `(fill-hash-table ,@key-value-pairs)))))
 
 (5am:def-test expr:hash-table ()
-  (5am:is (equal `(make-hash-table :test #'equal)
+  (5am:is (equal `(fill-hash-table)
                  (esrap:parse 'expr:hash-table "{}")))
+  (5am:is (equal `(fill-hash-table (:a 2))
+                 (esrap:parse 'expr:hash-table "{:a : 2}")))
+  (5am:is (equal `(fill-hash-table (:a 2))
+                 (esrap:parse 'expr:hash-table "{:a : 2,}")))
+  (5am:is (equal `(fill-hash-table (:a 2) ("b" 'progn))
+                 (esrap:parse 'expr:hash-table "{:a : 2, \"b\": $cl:progn }"))))
 
-  (optima:ematch (esrap:parse 'expr:hash-table "{:a : 2}")
-    ((list 'let (list (list ht-symbol expr))
-           (list 'setf (list 'gethash key ht-symbol-2) value)
-           ht-symbol-3)
-     (5am:is (equal `(make-hash-table :test #'equal
-                                      :size 1)
-                    expr))
-     (5am:is (equal ht-symbol ht-symbol-2))
-     (5am:is (equal :a key))
-     (5am:is (equal 2 value))
-     (5am:is (equal ht-symbol ht-symbol-3))))
-
-  (optima:ematch (esrap:parse 'expr:hash-table "{:a : 2,}")
-    ((list 'let (list (list ht-symbol expr))
-           (list 'setf (list 'gethash key ht-symbol-2) value)
-           ht-symbol-3)
-     (5am:is (equal `(make-hash-table :test #'equal
-                                      :size 1)
-                    expr))
-     (5am:is (equal ht-symbol ht-symbol-2))
-     (5am:is (equal :a key))
-     (5am:is (equal 2 value))
-     (5am:is (equal ht-symbol ht-symbol-3))))
-
-  (optima:ematch (esrap:parse 'expr:hash-table "{:a : 2, \"b\": $cl:progn }")
-
-    ((list 'let (list (list ht-symbol expr))
-           (list 'setf
-                 (list 'gethash key-1 ht-symbol-2) value-1
-                 (list 'gethash key-2 ht-symbol-3) value-2)
-           ht-symbol-4)
-
-     (5am:is (equal `(make-hash-table :test #'equal
-                                      :size 2)
-                    expr))
-
-     (5am:is (equal ht-symbol ht-symbol-2))
-     (5am:is (equal :a key-1))
-     (5am:is (equal 2 value-1))
-
-     (5am:is (equal ht-symbol ht-symbol-3))
-     (5am:is (equal "b" key-2))
-     (5am:is (equal ''cl:progn value-2))
-
-     (5am:is (equal ht-symbol ht-symbol-4)))))
+(defmacro fill-hash-set (&rest members)
+  (let ((hs (gensym "HASH-SET")))
+    (if (null members)
+        `(make-hash-table :test #'equal)
+        `(let ((,hs (make-hash-table
+                     :test #'equal
+                     :size ,(length members))))
+           (setf ,@(alexandria:mappend
+                    (lambda (member)
+                      `((gethash ,member ,hs) cl:t))
+                    members))
+           ,hs))))
 
 (esrap:defrule expr:hash-set
     (or (and #\{
@@ -101,72 +77,17 @@
                      *whitespace #\,))
              #\}))
   (:function (lambda (expr)
-               (let ((ht (gensym "HASH-TABLE"))
-                     (members
+               (let ((members
                        (if (null (cdddr expr)) ; length = 3, second
                            (mapcar #'second (second expr))
                            (cons (second expr) ; first
                                  (mapcar #'third (fourth expr))))))
-                 (if (null members)
-                     `(make-hash-table :test #'equal)
-                     `(let ((,ht (make-hash-table
-                                  :test #'equal
-                                  :size ,(length members))))
-                        (setf ,@(alexandria:mappend
-                                 (lambda (member)
-                                   `((gethash ,member ,ht) cl:t))
-                                 members))
-                        ,ht))))))
+                 `(fill-hash-set ,@members)))))
 
 (5am:def-test expr:hash-set ()
-
-  (optima:ematch (esrap:parse 'expr:hash-set "{:a}")
-    ((list 'let (list (list ht-symbol expr))
-           (list 'setf (list 'gethash key ht-symbol-2) value)
-           ht-symbol-3)
-     (5am:is (equal `(make-hash-table :test #'equal
-                                      :size 1)
-                    expr))
-     (5am:is (equal ht-symbol ht-symbol-2))
-     (5am:is (equal :a key))
-     (5am:is (equal t value))
-     (5am:is (equal ht-symbol ht-symbol-3))))
-
-  (optima:ematch (esrap:parse 'expr:hash-set "{:a,}")
-    ((list 'let (list (list ht-symbol expr))
-           (list 'setf (list 'gethash key ht-symbol-2) value)
-           ht-symbol-3)
-     (5am:is (equal `(make-hash-table :test #'equal
-                                      :size 1)
-                    expr))
-     (5am:is (equal ht-symbol ht-symbol-2))
-     (5am:is (equal :a key))
-     (5am:is (equal t value))
-     (5am:is (equal ht-symbol ht-symbol-3))))
-
-  (optima:ematch (esrap:parse 'expr:hash-set "{:a, \"b\" , $cl:progn }")
-
-    ((list 'let (list (list ht-symbol expr))
-           (list 'setf
-                 (list 'gethash key-1 ht-symbol-2) value-1
-                 (list 'gethash key-2 ht-symbol-3) value-2
-                 (list 'gethash key-3 ht-symbol-4) value-3)
-           ht-symbol-last)
-
-     (5am:is (equal `(make-hash-table :test #'equal
-                                      :size 3)
-                    expr))
-
-     (5am:is (equal ht-symbol ht-symbol-2))
-     (5am:is (equal :a key-1))
-     (5am:is (equal t value-1))
-
-     (5am:is (equal ht-symbol ht-symbol-3))
-     (5am:is (equal "b" key-2))
-     (5am:is (equal t value-2))
-
-     (5am:is (equal ht-symbol ht-symbol-4))
-     (5am:is (equal ''progn key-3))
-     (5am:is (equal t value-3))
-
-     (5am:is (equal ht-symbol ht-symbol-last)))))
+  (5am:is (equal `(fill-hash-set :a)
+                 (esrap:parse 'expr:hash-set "{:a}")))
+  (5am:is (equal `(fill-hash-set :a)
+                 (esrap:parse 'expr:hash-set "{:a,}")))
+  (5am:is (equal `(fill-hash-set :a "b" 'progn)
+                 (esrap:parse 'expr:hash-set "{:a, \"b\" , $cl:progn }"))))

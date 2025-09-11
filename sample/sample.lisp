@@ -16,6 +16,12 @@
 
 (format t "hello! ~s: ~a~%" 'foo foo)
 
+(defparameter ht (moonli::fill-hash-table (:a 2) ("b" 3)))
+
 (let ((a 1))
   a)
+
+(let ((a 1))
+  (format t "a + gethash(:a, ht) + gethash(\"b\", ht) = ~a~%"
+          (+ a (+ (gethash :a ht) (gethash "b" ht)))))
 
