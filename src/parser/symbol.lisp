@@ -30,7 +30,13 @@
   (:function (lambda (expr)
                (optima:match expr
                  ((list package-name ":" symbol-name)
-                  (intern symbol-name (find-package package-name)))
+                  (let ((package (find-package package-name)))
+                    (if package
+                        (intern symbol-name package)
+                        (error (format nil "Package with name ~A does not exist while reading ~A:~A"
+                                       package-name
+                                       (string-invert-case package-name)
+                                       (string-invert-case symbol-name))))))
                  ((list ":" symbol-name)
                   (intern symbol-name :keyword))
                  ((list symbol-name)
