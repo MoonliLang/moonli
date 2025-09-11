@@ -5,7 +5,7 @@ end defpackage
 
 in-package :moonli-sample
 
-defvar moonli-sample:foo $abc;
+defvar moonli-sample:foo = $abc;
 print(*package*)
 print(foo)
 format(t, "hello! ~s: ~a~%", $foo, foo)
