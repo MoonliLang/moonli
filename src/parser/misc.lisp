@@ -49,9 +49,10 @@
 (esrap:defrule list
     (or (and #\( *whitespace #\))
         (and #\(
+             *whitespace
              moonli-expression
              *whitespace
-             (+ (and #\, *whitespace moonli-expression *whitespace))
+             (* (and #\, *whitespace moonli-expression *whitespace))
              #\))
         (and #\(
              (+ (and *whitespace
@@ -60,10 +61,10 @@
              #\)))
   (:function (lambda (expr)
                (cons 'list
-                     (if (null (cdddr expr)) ; length = 3
+                     (if (null (cdddr expr)) ; length = 3, first or last
                          (mapcar #'second (second expr))
-                         (cons (second expr)
-                               (mapcar #'third (fourth expr))))))))
+                         (cons (third expr) ; middle
+                               (mapcar #'third (fifth expr))))))))
 
 (5am:def-test list ()
   (5am:is (equal '(list)
@@ -74,6 +75,8 @@
                  (esrap:parse 'list (format nil "(~%)"))))
   (5am:is (equal '(list 3)
                  (esrap:parse 'list "(3 ,)")))
+  (5am:is (equal '(list 3)
+                 (esrap:parse 'list (format nil "(~%  3~%)"))))
   (5am:is (equal '(list 3)
                  (esrap:parse 'list "(3,)")))
   (5am:is (equal '(list 3 :hello)
