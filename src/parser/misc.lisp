@@ -22,13 +22,13 @@
   (:function (lambda (expr)
                `(cl:quote ,(second expr)))))
 
-(esrap:defrule character-literal
+(esrap:defrule expr:character
     (and #\' character #\')
   (:function second))
 
 ;; TODO: Generalization for escape chars
 
-(esrap:defrule string-literal
+(esrap:defrule string
     (and #\"
          (* (or (and #\\ #\")
                 (not #\")))
@@ -44,9 +44,9 @@
                       (write-string (second elt) s))))))))
 
 (esrap:defrule string-designator
-    (or string-literal symbol))
+    (or string expr:symbol))
 
-(esrap:defrule list
+(esrap:defrule expr:list
     (or (and #\( *whitespace #\))
         (and #\(
              *whitespace
@@ -66,36 +66,36 @@
                          (cons (third expr) ; middle
                                (mapcar #'third (fifth expr))))))))
 
-(5am:def-test list ()
+(5am:def-test expr:list ()
   (5am:is (equal '(list)
-                 (esrap:parse 'list "()")))
+                 (esrap:parse 'expr:list "()")))
   (5am:is (equal '(list)
-                 (esrap:parse 'list "( )")))
+                 (esrap:parse 'expr:list "( )")))
   (5am:is (equal '(list)
-                 (esrap:parse 'list (format nil "(~%)"))))
+                 (esrap:parse 'expr:list (format nil "(~%)"))))
   (5am:is (equal '(list 3)
-                 (esrap:parse 'list "(3 ,)")))
+                 (esrap:parse 'expr:list "(3 ,)")))
   (5am:is (equal '(list 3)
-                 (esrap:parse 'list (format nil "(~%  3~%)"))))
+                 (esrap:parse 'expr:list (format nil "(~%  3~%)"))))
   (5am:is (equal '(list 3)
-                 (esrap:parse 'list "(3,)")))
+                 (esrap:parse 'expr:list "(3,)")))
   (5am:is (equal '(list 3 :hello)
-                 (esrap:parse 'list "(3,:hello)")))
+                 (esrap:parse 'expr:list "(3,:hello)")))
   (5am:is (equal '(list 3 :hello)
-                 (esrap:parse 'list "(3, :hello)")))
+                 (esrap:parse 'expr:list "(3, :hello)")))
   (5am:is (equal '(list 3 :hello)
-                 (esrap:parse 'list "(3, :hello )")))
+                 (esrap:parse 'expr:list "(3, :hello )")))
   (5am:is (equal '(list 3 :hello)
-                 (esrap:parse 'list "(3, :hello, )")))
+                 (esrap:parse 'expr:list "(3, :hello, )")))
   (5am:is (equal '(list 3 (null a))
-                 (esrap:parse 'list "(3,null(a))"))))
+                 (esrap:parse 'expr:list "(3,null(a))"))))
 
-(esrap:defrule function-call
+(esrap:defrule expr:function-call
     ;; Don't put a whitespace
     ;; FIXME: Handle macros
     (and good-symbol
          (or (and #\( *whitespace moonli-expression *whitespace #\))
-             list))
+             expr:list))
   (:function (lambda (expr)
                (cons (first expr)
                      (if (eq 'list (first (second expr)))

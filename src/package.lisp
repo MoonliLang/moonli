@@ -1,14 +1,35 @@
+(defpackage :moonli/expressions
+  (:use)
+  (:export #:symbol
+           #:character
+           #:list
+           #:function-call
+           #:hash-table
+           #:hash-set
+
+           #:let
+           #:defun
+           #:if
+
+           #:defpackage
+           #:defvar
+           #:defparameter
+           #:in-package))
+
 (defpackage :moonli
   (:use :cl)
   (:export #:moonli
            #:moonli-expression
            #:read-moonli-from-stream
            #:read-moonli-from-string
+           #:moonli-string-to-lisp-string
            #:compile-moonli-file
            #:load-moonli-file
            #:define-moonli-macro
-           #:define-moonli-short-macro))
+           #:define-moonli-short-macro)
+  (:local-nicknames (:expr :moonli/expressions)))
 
 
 (5am:def-suite :moonli)
 (5am:in-suite :moonli)
+

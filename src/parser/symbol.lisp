@@ -23,7 +23,7 @@
   (:text t)
   (:function string-invert-case))
 
-(esrap:defrule symbol
+(esrap:defrule expr:symbol
     (or (and #\: simple-symbol)
         (and simple-symbol #\: simple-symbol)
         (and simple-symbol))
@@ -46,4 +46,4 @@
   (not (member symbol '(end true false elif else)
                :test #'string-equal)))
 
-(esrap:defrule good-symbol (good-symbol-p symbol))
+(esrap:defrule good-symbol (good-symbol-p expr:symbol))

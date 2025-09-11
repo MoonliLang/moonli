@@ -20,11 +20,11 @@
   `(defparameter ,name ,value))
 
 (define-moonli-short-macro in-package
-  ((name symbol))
+  ((name expr:symbol))
   (setf *package* (find-package name))
   `(in-package ,name))
 
-(5am:def-test in-package ()
+(5am:def-test expr:in-package ()
   (unwind-protect
        (progn
          (make-package "MOONLI/TEST/IN-PACKAGE")

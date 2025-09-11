@@ -3,8 +3,8 @@
 (5am:in-suite :moonli)
 
 (esrap:defrule atomic-expression
-    (or character-literal
-        string-literal
+    (or expr:character
+        string
         number
         good-symbol))
 
@@ -14,10 +14,10 @@
         infix-expression
         typed-expression
         bracketed-expression
-        function-call
-        list
-        hash-table
-        hash-set
+        expr:function-call
+        expr:list
+        expr:hash-table
+        expr:hash-set
         quoted-expression
         atomic-expression))
 

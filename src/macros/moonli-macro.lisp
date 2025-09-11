@@ -38,7 +38,7 @@
   `(let ,let-bindings
      ,@(rest let-body)))
 
-(5am:def-test let ()
+(5am:def-test expr:let ()
   (5am:is (equal `(let ((a 2) (b 3))
                     (+ a b))
                  (esrap:parse 'macro-call
@@ -82,7 +82,7 @@ end let")
           ,@(rest else-part))))
 
 
-(5am:def-test if ()
+(5am:def-test expr:if ()
   (5am:is (equal `(cond (a b) (t))
                  (esrap:parse 'macro-call "if a: b
 end if")))
@@ -147,7 +147,7 @@ end if"))))
   ((name good-symbol)
    (_ *whitespace)
    (lambda-list (or (and #\( *whitespace good-symbol *whitespace #\))
-                    list))
+                    expr:list))
    (_ #\:)
    (body (esrap:? moonli)))
   `(defun ,name ,(if (eq 'list (first lambda-list))
@@ -156,7 +156,7 @@ end if"))))
      ,@(rest body)))
 
 
-(5am:def-test defun ()
+(5am:def-test expr:defun ()
   (5am:is (equal `(defun our-identity (x) x)
                  (esrap:parse 'macro-call "defun our-identity(x): x end")))
   (5am:is (equal `(defun add (&rest args) args)

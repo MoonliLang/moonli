@@ -9,7 +9,7 @@
   (:function (lambda (expr)
                `(,(first expr) ,(fifth expr)))))
 
-(esrap:defrule hash-table
+(esrap:defrule expr:hash-table
     (or (and #\{ *whitespace #\})
         (and #\{
              *whitespace
@@ -40,11 +40,11 @@
                                  key-value-pairs))
                         ,ht))))))
 
-(5am:def-test hash-table ()
+(5am:def-test expr:hash-table ()
   (5am:is (equal `(make-hash-table :test #'equal)
-                 (esrap:parse 'hash-table "{}")))
+                 (esrap:parse 'expr:hash-table "{}")))
 
-  (optima:ematch (esrap:parse 'hash-table "{:a : 2}")
+  (optima:ematch (esrap:parse 'expr:hash-table "{:a : 2}")
     ((list 'let (list (list ht-symbol expr))
            (list 'setf (list 'gethash key ht-symbol-2) value)
            ht-symbol-3)
@@ -56,7 +56,7 @@
      (5am:is (equal 2 value))
      (5am:is (equal ht-symbol ht-symbol-3))))
 
-  (optima:ematch (esrap:parse 'hash-table "{:a : 2,}")
+  (optima:ematch (esrap:parse 'expr:hash-table "{:a : 2,}")
     ((list 'let (list (list ht-symbol expr))
            (list 'setf (list 'gethash key ht-symbol-2) value)
            ht-symbol-3)
@@ -68,7 +68,7 @@
      (5am:is (equal 2 value))
      (5am:is (equal ht-symbol ht-symbol-3))))
 
-  (optima:ematch (esrap:parse 'hash-table "{:a : 2, \"b\": $cl:progn }")
+  (optima:ematch (esrap:parse 'expr:hash-table "{:a : 2, \"b\": $cl:progn }")
 
     ((list 'let (list (list ht-symbol expr))
            (list 'setf
@@ -90,7 +90,7 @@
 
      (5am:is (equal ht-symbol ht-symbol-4)))))
 
-(esrap:defrule hash-set
+(esrap:defrule expr:hash-set
     (or (and #\{
              moonli-expression
              *whitespace
@@ -118,9 +118,9 @@
                                  members))
                         ,ht))))))
 
-(5am:def-test hash-set ()
+(5am:def-test expr:hash-set ()
 
-  (optima:ematch (esrap:parse 'hash-set "{:a}")
+  (optima:ematch (esrap:parse 'expr:hash-set "{:a}")
     ((list 'let (list (list ht-symbol expr))
            (list 'setf (list 'gethash key ht-symbol-2) value)
            ht-symbol-3)
@@ -132,7 +132,7 @@
      (5am:is (equal t value))
      (5am:is (equal ht-symbol ht-symbol-3))))
 
-  (optima:ematch (esrap:parse 'hash-set "{:a,}")
+  (optima:ematch (esrap:parse 'expr:hash-set "{:a,}")
     ((list 'let (list (list ht-symbol expr))
            (list 'setf (list 'gethash key ht-symbol-2) value)
            ht-symbol-3)
@@ -144,7 +144,7 @@
      (5am:is (equal t value))
      (5am:is (equal ht-symbol ht-symbol-3))))
 
-  (optima:ematch (esrap:parse 'hash-set "{:a, \"b\" , $cl:progn }")
+  (optima:ematch (esrap:parse 'expr:hash-set "{:a, \"b\" , $cl:progn }")
 
     ((list 'let (list (list ht-symbol expr))
            (list 'setf
