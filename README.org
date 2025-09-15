@@ -5,6 +5,9 @@ Status: Explorative (pre-experimental). It is NOT ready for use in any project, 
 #+end_quote
 
 * What
+:PROPERTIES:
+:CUSTOM_ID: what
+:END:
 
 This is a syntax layer that transpiles to Common Lisp.
 
@@ -33,7 +36,40 @@ See [[./moonli-sample.asd]] and [[./sample/sample.moonli]] to include in your pr
 #+attr_html: :width 640px
 [[./repl/repl.gif]]
 
+* Table of Contents
+:PROPERTIES:
+:TOC:      :include all :depth 3
+:CUSTOM_ID: table-of-contents
+:END:
+
+:CONTENTS:
+- [[#what][What]]
+- [[#table-of-contents][Table of Contents]]
+- [[#why][Why]]
+- [[#features][Features]]
+  - [[#for-lispers][For lispers]]
+  - [[#for-programmers-in-general][For programmers in general]]
+- [[#installation][Installation]]
+  - [[#1-install-sbcl-or-ccl-or-another-common-lisp-compiler-or-interpreter][1. Install SBCL (or CCL or another Common Lisp compiler or interpreter)]]
+  - [[#2-install-ocicl][2. Install ocicl]]
+  - [[#3-install-moonli][3. Install moonli]]
+- [[#plan][Plan]]
+- [[#syntax][Syntax]]
+  - [[#global-variables][Global variables]]
+  - [[#local-variables][Local variables]]
+  - [[#symbols][Symbols]]
+  - [[#function-like-calls][Function-like calls]]
+  - [[#functions][Functions]]
+  - [[#dictionaries-or-hash-tables][Dictionaries or Hash-tables]]
+  - [[#sets-or-hash-sets][Sets or Hash-sets]]
+  - [[#infix-operators][Infix operators]]
+:END:
+
+
 * Why
+:PROPERTIES:
+:CUSTOM_ID: why
+:END:
 
 I love s-expression based syntaxes of lisps, particularly because of tools like [[http://danmidwood.com/content/2014/11/21/animated-paredit.html][paredit]] and [[https://github.com/abo-abo/lispy][lispy]], as well as [[https://lispcookbook.github.io/cl-cookbook/macros.html][macros]]. But I also acknowledge not every one has the time or patience to become comfortable with them, especially when it comes to reading code.
 
@@ -42,8 +78,14 @@ I also love [[https://common-lisp.net/][Common Lisp]] for [[https://www.quora.co
 Yet, in the 21st century, it is a fact that very many more people are familiar with python, matlab and julia than they are with lisps. Given the power and flexibility of common lisp, my ambitious plan is to get all mainstream languages to transpile to common lisp. The more realistic plan is to create and maintain the "Moonli" syntax layer in this repository.
 
 * Features
+:PROPERTIES:
+:CUSTOM_ID: features
+:END:
 
 ** For lispers
+:PROPERTIES:
+:CUSTOM_ID: for-lispers
+:END:
 
 - Case sensitive, but invert-case reader to maintain common lisp compatibility
 - Transpile to common lisp, so lispers need not "learn a new language"
@@ -51,6 +93,9 @@ Yet, in the 21st century, it is a fact that very many more people are familiar w
 - Inability to access internal symbols of another package through "A::B" syntax; this syntax rather translates to =(the B A)=
 
 ** For programmers in general
+:PROPERTIES:
+:CUSTOM_ID: for-programmers-in-general
+:END:
 
 - Sane variable scoping rules as given by common lisp
 - Sane namespace scoping thanks to common lisp package system
@@ -62,8 +107,14 @@ Yet, in the 21st century, it is a fact that very many more people are familiar w
 - Support for rapid prototyping through CLOS and image-based development
 
 * Installation
+:PROPERTIES:
+:CUSTOM_ID: installation
+:END:
 
 ** 1. Install SBCL (or CCL or another Common Lisp compiler or interpreter)
+:PROPERTIES:
+:CUSTOM_ID: 1-install-sbcl-or-ccl-or-another-common-lisp-compiler-or-interpreter
+:END:
 
 *** Mac OS
 
@@ -72,6 +123,9 @@ brew install sbcl
 #+end_src
 
 ** 2. Install ocicl
+:PROPERTIES:
+:CUSTOM_ID: 2-install-ocicl
+:END:
 
 *** Mac OS
 
@@ -94,6 +148,9 @@ Edit the lisp startup file (eg. =~/.sbclrc=) to include the current directory, o
 #+end_src
 
 ** 3. Install moonli
+:PROPERTIES:
+:CUSTOM_ID: 3-install-moonli
+:END:
 
 *** Build REPL
 
@@ -104,6 +161,9 @@ The following should create a =moonli= binary in the root directory of moonli.
 #+end_src
 
 * Plan
+:PROPERTIES:
+:CUSTOM_ID: plan
+:END:
 
 - DONE Real numbers, strings, characters, lists, infix arithmetic operators, literal hash-tables, literal hash-sets
 - DONE Typing using "expr::type" operator
@@ -117,4 +177,157 @@ The following should create a =moonli= binary in the root directory of moonli.
 - TODO Add more tests
 - TODO Reverse transpile from common lisp
 
+* Syntax
+:PROPERTIES:
+:CUSTOM_ID: syntax
+:END:
 
+As with lisp, everything is an expression.
+
+Simple syntax table:
+
+| Lisp                     | Moonli                  |
+|--------------------------+-------------------------|
+| #\a                      | 'a'                     |
+| "hello world"            | "hello world"           |
+| 2, 2.0, 2d-3, 2.0d-3     | 2, 2.0, 2d-3, 2.0d-3    |
+| 'quoted-symbol           | $quoted-symbol          |
+| package:exported-symbol  | package:exported-symbol |
+| package::internal-symbol | <WONTDO>                |
+| (the type expr)          | expr :: type            |
+| (list form-1 form-2)     | (form-1, form-2)        |
+| (fn arg1 arg2)           | fn(arg1, arg2)          |
+| #c(re, im)               | <TODO>                  |
+
+** Global variables
+:PROPERTIES:
+:CUSTOM_ID: global-variables
+:END:
+
+#+begin_src moonli
+defparameter *global* = 23
+#+end_src
+
+** Local variables
+:PROPERTIES:
+:CUSTOM_ID: local-variables
+:END:
+
+#+begin_src moonli
+let answer-to-everything = 42 :
+  answer-to-everything
+end
+#+end_src
+
+** Symbols
+:PROPERTIES:
+:CUSTOM_ID: symbols
+:END:
+
+Most valid symbols can be written in moonli. For example, above =*global*= and =answer-to-everything= are each single symbols. This is unlike mainstream languages where =* - ? != and several other characters are not allowed in symbols.
+
+However, this means that symbols must be separated from each other by space. This is necessary to make a distinction between whether a character stands for an infix operation or is part of a symbol. =a+b= is a single symbol, but =a + b= is translated to the lisp expression =(+ a b)=.
+
+** Function-like calls
+:PROPERTIES:
+:CUSTOM_ID: function-like-calls
+:END:
+
+#+begin_src moonli
+identity("hello world")
+function(identity)
+#+end_src
+
+Because lisp macros and functions follow similar syntax, moonli syntax for function calls can also be used for macro calls when the macro syntax is simple. (Indeed, this can be inconvenient; see [[defining your own]].)
+
+#+begin_src moonli
+destructuring-bind(a(b),(1,2),+(1,2))
+#+end_src
+
+transpiles to
+
+#+begin_src lisp
+(destructuring-bind (a b) (list 1 2)
+  (+ 1 2))
+#+end_src
+
+** Functions
+:PROPERTIES:
+:CUSTOM_ID: functions
+:END:
+
+Like lisp, return is implicit.
+
+#+begin_src moonli
+defun fib(n):
+  if n < 0:
+     error("Don't know how to compute fib for n=~d < 0", n)
+  elif n == 0 or n == 1:
+     1
+  else:
+    fib(n-1) + fib(n-2)
+  end
+end
+
+** Dictionaries or Hash-tables
+:PROPERTIES:
+:CUSTOM_ID: dictionaries-or-hash-tables
+:END:
+
+#+begin_src moonli
+{
+  :a : 2,
+  \"b\": $cl:progn
+}
+#+end_src
+
+transpiles to
+
+#+begin_src lisp
+(fill-hash-table (:a 2) ("b" 'progn))
+#+end_src
+
+which expands to
+
+#+begin_src lisp
+(let ((#:hash-table413 (make-hash-table :test #'equal :size 2)))
+  (setf (gethash :a #:hash-table413) 2
+        (gethash "b" #:hash-table413) 'progn)
+  #:hash-table413)
+#+end_src
+
+** Sets or Hash-sets
+:PROPERTIES:
+:CUSTOM_ID: sets-or-hash-sets
+:END:
+
+#+begin_src moonli
+{:a, \"b\" , $cl:progn}
+#+end_src
+
+transpiles to
+
+#+begin_src lisp
+(fill-hash-set :a "b" 'progn)
+#+end_src
+
+which expands to
+
+#+begin_src lisp
+(let ((#:hash-set417 (make-hash-table :test #'equal :size 3)))
+  (setf (gethash :a #:hash-set417) t
+        (gethash "b" #:hash-set417) t
+        (gethash 'progn #:hash-set417) t)
+  #:hash-set417)
+#+end_src
+
+** Infix operators
+:PROPERTIES:
+:CUSTOM_ID: infix-operators
+:END:
+
+The following infix operators are recognized:
+
+- =+ - * / ^=
+- =or and not=
+- < <= == != >= > 
