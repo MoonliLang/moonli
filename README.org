@@ -109,7 +109,7 @@ The following should create a =moonli= binary in the root directory of moonli.
 - DONE Typing using "expr::type" operator
 - TODO Support for declare and declaim
 - TODO Literal syntax for vectors, array access
-- TODO BODMAS rule for parsing expressions
+- DONE BODMAS rule for parsing expressions
 - TODO VS Code integration
 - TODO Emacs mode and integration with slime
 - TODO Infix Logical operators

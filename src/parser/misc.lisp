@@ -2,23 +2,12 @@
 
 (5am:in-suite :moonli)
 
-(esrap:defrule infix-expression
-    (and moonli-expression
-         *whitespace
-         infix-operator
-         *whitespace
-         moonli-expression)
-  (:function (lambda (expr)
-               (destructuring-bind (arg1 w1 op w2 arg2) expr
-                 (declare (ignore w1 w2))
-                 (list op arg1 arg2)))))
-
 (esrap:defrule bracketed-expression
     (and #\( *whitespace moonli-expression *whitespace #\))
   (:function third))
 
 (esrap:defrule quoted-expression
-    (and #\$ moonli-expression)
+    (and #\$ atomic-expression)
   (:function (lambda (expr)
                `(cl:quote ,(second expr)))))
 
@@ -52,7 +41,7 @@
              *whitespace
              moonli-expression
              *whitespace
-             (* (and #\, *whitespace moonli-expression *whitespace))
+             (+ (and #\, *whitespace moonli-expression *whitespace))
              #\))
         (and #\(
              (+ (and *whitespace
@@ -76,7 +65,7 @@
   (5am:is (equal '(list 3)
                  (esrap:parse 'expr:list "(3 ,)")))
   (5am:is (equal '(list 3)
-                 (esrap:parse 'expr:list (format nil "(~%  3~%)"))))
+                 (esrap:parse 'expr:list (format nil "(~%  3~%,)"))))
   (5am:is (equal '(list 3)
                  (esrap:parse 'expr:list "(3,)")))
   (5am:is (equal '(list 3 :hello)
@@ -93,7 +82,7 @@
 (esrap:defrule expr:function-call
     ;; Don't put a whitespace
     ;; FIXME: Handle macros
-    (and good-symbol
+    (and atomic-expression
          (or (and #\( *whitespace moonli-expression *whitespace #\))
              expr:list))
   (:function (lambda (expr)

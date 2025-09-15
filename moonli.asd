@@ -14,6 +14,7 @@
                              (:file "hash-table-or-set")
                              (:file "macros")
                              (:file "misc")
+                             (:file "infix")
                              (:file "expressions")))
                (:module "macros"
                 :components ((:file "moonli-macro")

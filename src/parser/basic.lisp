@@ -49,13 +49,3 @@
     (or #\| #\: #\, #\$ #\' #\" open-bracket close-bracket
         whitespace/internal whitespace/end))
 
-(esrap:defrule infix-operator
-    (and (or "==" "=" "+" "-" "*" "/" "^") +whitespace/internal)
-  ;; FIXME: Precedence and brackets?
-  (:function (lambda (arg)
-               (alexandria:switch ((first arg) :test #'string=)
-                 ("=" 'setf)
-                 ("==" '=)
-                 ("^" 'expt)
-                 (t (find-symbol (first arg) :cl))))))
-

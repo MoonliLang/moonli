@@ -23,5 +23,5 @@
 
 (let ((a 1))
   (format t "a + gethash(:a, ht) + gethash(\"b\", ht) = ~a~%"
-          (+ a (+ (gethash :a ht) (gethash "b" ht)))))
+          (+ (+ a (gethash :a ht)) (gethash "b" ht))))
 
