@@ -20,6 +20,7 @@
           :do (write-char (read-char stream))))))
 
 (defun read-moonli-from-string (string)
+  "NOTE: Some moonli forms like defpackage and in-package can have side-effects."
   (let ((end (length string))
         (pos 0)
         (exprs ()))
@@ -43,10 +44,10 @@
       (load source-file)
       (error "Don't know how to load when source-file is ~S and fasl-file is ~S" source-file fasl-file)))
 
-(defun compile-moonli-file (source-file fasl-file)
-  (format *standard-output* "; transpiling ~A~%" (namestring source-file))
-  (let* ((source (alexandria:read-file-into-string source-file))
-         (target-file (make-pathname :defaults source-file :type "lisp"))
+(defun transpile-moonli-file (moonli-file)
+  (format *standard-output* "; transpiling ~A~%" (namestring moonli-file))
+  (let* ((source (alexandria:read-file-into-string moonli-file))
+         (target-file (make-pathname :defaults moonli-file :type "lisp"))
          (target (read-moonli-from-string source)))
     (format *standard-output* ";  to ~A~%" (namestring target-file))
     ;; (setq *file-string* source)
@@ -62,7 +63,11 @@
         (terpri out)
         (terpri out)))
     (format *standard-output* "; wrote ~A~%" (namestring target-file))
-    (asdf:compile-file* target-file :output-file fasl-file)))
+    target-file))
+
+(defun compile-moonli-file (source-file fasl-file)
+  (let ((lisp-source-file (transpile-moonli-file source-file)))
+    (asdf:compile-file* lisp-source-file :output-file fasl-file)))
 
 #|
 1. We want an extensible system to recognize moonli macros such as "LET". ; ;

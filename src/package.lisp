@@ -26,7 +26,9 @@
            #:compile-moonli-file
            #:load-moonli-file
            #:define-moonli-macro
-           #:define-moonli-short-macro)
+           #:define-moonli-short-macro
+
+           #:main)
   (:local-nicknames (:expr :moonli/expressions)))
 
 

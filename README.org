@@ -152,9 +152,28 @@ Edit the lisp startup file (eg. =~/.sbclrc=) to include the current directory, o
 :CUSTOM_ID: 3-install-moonli
 :END:
 
-*** Build REPL
+*** Building basic binary
 
 The following should create a =moonli= binary in the root directory of moonli.
+
+#+begin_src lisp
+(asdf:make :moonli)
+#+end_src
+
+#+begin_src
+./moonli --help
+A basic moonli transpiler over SBCL
+Available options:
+  -h, --help                 Print this help text
+  -l, --load-lisp ARG        Load lisp file
+  -m, --load-moonli ARG      Load moonli file
+  -t, --transpile-moonli ARG
+                             Transpile moonli file to lisp file
+#+end_src
+
+*** Build REPL
+
+The following should create a =cl-repl.moonli= binary in the root directory of moonli.
 
 #+begin_src lisp
 (asdf:make :moonli-repl)
