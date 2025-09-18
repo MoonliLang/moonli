@@ -16,7 +16,8 @@
            #:defparameter
            #:in-package
            #:declare
-           #:declaim))
+           #:declaim
+           #:lambda))
 
 (defpackage :moonli
   (:use :cl)

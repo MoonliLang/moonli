@@ -83,3 +83,19 @@
                  (esrap:parse 'short-macro-call "declaim inline(foo)")))
   (5am:is (equal `(declaim (type hash-table *map*))
                  (esrap:parse 'short-macro-call "declaim type(hash-table, *map*)"))))
+
+(define-moonli-short-macro lambda
+  ((lambda-list lambda-parameter-list)
+   (_ *whitespace/internal)
+   (_ #\:)
+   (_ *whitespace/internal)
+   (form moonli-expression))
+  `(lambda ,lambda-list ,form))
+
+(5am:def-test expr:lambda ()
+  (5am:is (equal `(lambda () nil)
+                 (esrap:parse 'short-macro-call "lambda (): nil")))
+  (5am:is (equal `(lambda (x) x)
+                 (esrap:parse 'short-macro-call "lambda (x): x")))
+  (5am:is (equal `(lambda (x y) (+ x y))
+                 (esrap:parse 'short-macro-call "lambda (x, y): x + y"))))
