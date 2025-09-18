@@ -10,6 +10,7 @@
            #:let
            #:defun
            #:if
+           #:loop
 
            #:defpackage
            #:defvar

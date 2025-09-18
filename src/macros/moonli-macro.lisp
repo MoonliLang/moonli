@@ -266,3 +266,19 @@ end
   (let ((form `(defpackage ,name ,@options)))
     (eval form)
     form))
+
+(define-moonli-macro loop
+  ((body (esrap:? moonli)))
+  `(loop ,@(rest body)))
+
+(5am:def-test expr:loop ()
+  (5am:is (equal `(loop)
+                 (esrap:parse 'macro-call "loop end loop")))
+  (5am:is (equal `(loop :repeat n :do (print "hello"))
+                 (esrap:parse 'macro-call "loop :repeat n :do
+  print(\"hello\")
+end")))
+  (5am:is (equal `(loop :for i :below n :do (print (+ i 1)))
+                 (esrap:parse 'macro-call "loop :for i :below n :do
+  print(i + 1)
+end"))))
