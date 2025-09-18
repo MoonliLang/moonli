@@ -5,24 +5,23 @@ on:
 
 jobs:
 
-  test:
+  build:
 
-    name: ${{ matrix.lisp }}
+    name: ${{ matrix.os }}
+
+    runs-on: windows-latest
 
     strategy:
       matrix:
         lisp: [sbcl]
-        os: [ubuntu-22.04, ubuntu-24.04]
-    runs-on: ${{ matrix.os }}
+        os: [windows]
+
+    defaults:
+      run:
+        shell: bash
 
     steps:
-
-    - uses: actions/checkout@v2
-
-    - name: Update $PATH
-      run: |
-        echo $PATH
-        echo "PATH=$HOME/bin:$PATH" >> $GITHUB_ENV
+    - uses: actions/checkout@v3
 
     - name: Check $PATH
       run: echo $PATH
@@ -33,10 +32,11 @@ jobs:
     - name: Download implementation
       env:
         LISP: ${{ matrix.lisp }}
-        OS: ${{ matrix.os }}
+        OS:   ${{ matrix.os }}
       run: |
         pwd
         ls -l
+        bash --version
         bash <(curl -s https://raw.githubusercontent.com/digikar99/lisp-travis-lite/master/run.sh)
 
     - name: Download download-dependencies
@@ -47,9 +47,10 @@ jobs:
       run: |
         cl --eval '(ql:quickload "download-dependencies")' \
            --eval '(in-package :download-dependencies)' \
-           --eval '(push #P"./" ql:*local-project-directories*)' \
+           --eval '(push "./" ql:*local-project-directories*)' \
            --eval '(let ((*dependencies-home* (second ql:*local-project-directories*))) (ensure-system "moonli-repl"))'
         ls $HOME/quicklisp/local-projects/
+
 
     - name: Prepare moonli
       run: cl --eval '(push "./" ql:*local-project-directories*)' --eval '(ql:quickload "moonli")' --eval "(asdf:make :moonli)"

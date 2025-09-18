@@ -1,0 +1,89 @@
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+
+  build:
+
+    name: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        lisp: [sbcl]
+        os: [ubuntu-22.04, ubuntu-24.04]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+
+    - uses: actions/checkout@v2
+
+    - name: Update $PATH
+      run: |
+        echo $PATH
+        echo "PATH=$HOME/bin:$PATH" >> $GITHUB_ENV
+
+    - name: Check $PATH
+      run: echo $PATH
+
+    - name: Add $CORE_NAME
+      run: echo "CORE_NAME=moonli-${{ matrix.os }}-${{ github.ref_name }}" >> $GITHUB_ENV
+
+    - name: Download implementation
+      env:
+        LISP: ${{ matrix.lisp }}
+        OS: ${{ matrix.os }}
+      run: |
+        pwd
+        ls -l
+        bash <(curl -s https://raw.githubusercontent.com/digikar99/lisp-travis-lite/master/run.sh)
+
+    - name: Download download-dependencies
+      run: |
+        git clone https://github.com/digikar99/download-dependencies $HOME/quicklisp/local-projects/download-dependencies
+
+    - name: Download dependencies
+      run: |
+        cl --eval '(ql:quickload "download-dependencies")' \
+           --eval '(in-package :download-dependencies)' \
+           --eval '(push #P"./" ql:*local-project-directories*)' \
+           --eval '(let ((*dependencies-home* (second ql:*local-project-directories*))) (ensure-system "moonli-repl"))'
+        ls $HOME/quicklisp/local-projects/
+
+    - name: Prepare moonli
+      run: cl --eval '(push "./" ql:*local-project-directories*)' --eval '(ql:quickload "moonli")' --eval "(asdf:make :moonli)"
+
+    - name: Prepare cl-repl.moonli
+      run: cl --eval '(push "./" ql:*local-project-directories*)' --eval '(ql:quickload "moonli-repl")' --eval "(asdf:make :moonli-repl)"
+
+    - name: Rename
+      run: |
+        mv moonli $CORE_NAME
+        mv cl-repl.moonli cl-repl.$CORE_NAME
+
+    - name: Upload moonli
+      uses: actions/upload-artifact@v4
+      with:
+        name: moonli-${{ matrix.os }}-${{ github.ref_name }}
+        path: moonli-${{ matrix.os }}-${{ github.ref_name }}
+
+    - name: Upload cl-repl.moonli
+      uses: actions/upload-artifact@v4
+      with:
+        name: cl-repl.moonli-${{ matrix.os }}-${{ github.ref_name }}
+        path: cl-repl.moonli-${{ matrix.os }}-${{ github.ref_name }}
+
+    - name: Publish moonli
+      uses: SierraSoftworks/gh-releases@v1.0.4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        overwrite: 'true'
+        files: moonli-${{ matrix.os }}-${{ github.ref_name }}
+
+    - name: Publish cl-repl.moonli
+      uses: SierraSoftworks/gh-releases@v1.0.4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        overwrite: 'true'
+        files: cl-repl.moonli-${{ matrix.os }}-${{ github.ref_name }}
