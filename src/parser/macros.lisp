@@ -23,7 +23,7 @@
   (alexandria:with-gensyms (expr subexpr args fn idx symbol)
     (let* ((namep (namep-symbol name))
            (macro-rule `(and (,namep good-symbol)
-                             +whitespace/internal
+                             +whitespace
                              ,@(mapcar #'second moonli-macro-bindings)
                              *whitespace "end"
                              (esrap:? +whitespace/internal)

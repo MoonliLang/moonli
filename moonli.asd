@@ -2,6 +2,7 @@
   :depends-on ("alexandria"
                "esrap"
                "fiveam"
+               "let-plus"
                "optima"
                "parse-number"
                "unix-opts")

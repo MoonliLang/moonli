@@ -282,3 +282,67 @@ end")))
                  (esrap:parse 'macro-call "loop :for i :below n :do
   print(i + 1)
 end"))))
+
+
+(esrap:defrule let+-binding
+    (and (or expr:function-call
+             good-symbol
+             bracketed-expression
+             expr:list)
+         +whitespace
+         #\=
+         +whitespace
+         moonli-expression)
+  (:function (lambda (expr)
+               (list (let ((var-form (first expr)))
+                       (if (and (listp var-form)
+                                (eq 'list (first var-form)))
+                           (rest var-form)
+                           var-form))
+                     (fifth expr)))))
+
+
+(esrap:defrule let+-bindings
+    (or (and let+-binding
+             (* (and #\,
+                     +whitespace
+                     let+-binding
+                     *whitespace)))
+        (* whitespace))
+  (:function (lambda (expr)
+               (if (null expr)
+                   nil
+                   (cons (first expr)
+                         (mapcar #'third (second expr)))))))
+
+
+(define-moonli-macro let-plus:let+
+  ((let-bindings let+-bindings)
+   (_ *whitespace)
+   (_ #\:)
+   (let-body (esrap:? moonli)))
+  `(let-plus:let+ ,let-bindings
+     ,@(rest let-body)))
+
+(5am:def-test let-plus:let+ ()
+  (5am:is (equal `(let-plus:let+ ((x 42)) x)
+                 (esrap:parse 'macro-call "let-plus:let+ x = 42: x
+end")))
+  (5am:is (equal `(let-plus:let+ (((a b) (list 1 2)))
+                    (+ a b))
+                 (esrap:parse 'macro-call "let-plus:let+ (a,b) = list(1,2):
+  a + b
+end")))
+  (5am:is (equal `(let-plus:let+ (((let-plus:&values a b) (list 1 2)))
+                    (+ a b))
+                 (esrap:parse 'macro-call "let-plus:let+ let-plus:&values(a,b) = list(1,2):
+  a + b
+end")))
+  (5am:is (equal `(let-plus:let+ (((let-plus:&values a b) (list 1 2))
+                                  ((c d e) (list 1 2 3)))
+                    (fill-hash-set a b c d e))
+                 (esrap:parse 'macro-call "let-plus:let+
+  let-plus:&values(a,b) = list(1,2),
+  (c,d,e) = list(1,2,3):
+  {a,b,c,d,e}
+end"))))
