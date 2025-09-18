@@ -38,7 +38,7 @@ See [[./moonli-sample.asd]] and [[./sample/sample.moonli]] to include in your pr
 
 * Table of Contents
 :PROPERTIES:
-:TOC:      :include all :depth 3
+:TOC:      :include all :depth 4
 :CUSTOM_ID: table-of-contents
 :END:
 
@@ -50,9 +50,12 @@ See [[./moonli-sample.asd]] and [[./sample/sample.moonli]] to include in your pr
   - [[#for-lispers][For lispers]]
   - [[#for-programmers-in-general][For programmers in general]]
 - [[#installation][Installation]]
-  - [[#1-install-sbcl-or-ccl-or-another-common-lisp-compiler-or-interpreter][1. Install SBCL (or CCL or another Common Lisp compiler or interpreter)]]
-  - [[#2-install-ocicl][2. Install ocicl]]
-  - [[#3-install-moonli][3. Install moonli]]
+  - [[#binaries---trial-basis][Binaries - Trial Basis]]
+  - [[#from-fresh-compilers][From fresh compilers]]
+    - [[#0-install-a-package-manager][0. Install a package manager]]
+    - [[#1-install-a-compiler-and-some-tools][1. Install a compiler and some tools]]
+    - [[#2-install-ocicl][2. Install ocicl]]
+    - [[#3-moonli][3. Moonli]]
 - [[#plan][Plan]]
 - [[#syntax][Syntax]]
   - [[#global-variables][Global variables]]
@@ -82,7 +85,7 @@ Yet, in the 21st century, it is a fact that very many more people are familiar w
 :CUSTOM_ID: features
 :END:
 
-** For lispers
+** For common lispers
 :PROPERTIES:
 :CUSTOM_ID: for-lispers
 :END:
@@ -106,53 +109,175 @@ Yet, in the 21st century, it is a fact that very many more people are familiar w
 - Returning multiple values without an intermediate data structure
 - Support for rapid prototyping through CLOS and image-based development
 
+Here's a brief comparison of features across different languages.
+
+| *Features*                          |  *Moonli*  | *Common Lisp* |   *Julia*   |  *Haskell*  |   *Rust*    |  *Python*  | *Javascript* |     *C*     |
+|                                   |   <c>    |     <c>     |    <c>    |    <c>    |    <c>    |   <c>    |    <c>     |    <c>    |
+|-----------------------------------+----------+-------------+-----------+-----------+-----------+----------+------------+-----------|
+| Syntax                            |    +     |      +      |     +     |     +     |    ---    |    +     |     -      |     -     |
+| Interactivity (Rapid Prototyping) |   High   |  Very High  | Moderate  |    Low    |   None    | Moderate |  Moderate  |   None    |
+| Typing (Strong/Weak)              |  Strong  |   Strong    |  Strong   |  Strong   |  Strong   |  Strong  |    Weak    |   Weak    |
+| Typing (Static/Dynamic)           | Flexible |  Flexible   | Flexible  |  Static   |  Static   | Dynamic  |  Dynamic   |  Dynamic  |
+| Typing (Expressivity)             | Flexible |  Flexible   | Moderate  | Very High | Very High |   Low    |    Low     |    Low    |
+| Compiler Speed                    | Flexible |  Flexible   |   Slow    | Moderate  |   Slow    | Moderate |  Moderate  | Moderate  |
+| Runtime Speed                     | Flexible |  Flexible   |   Fast    | Moderate  |   Fast    |   Slow   |  Moderate  |   Fast    |
+| Runtime Error Recovery            | Advanced |  Advanced   |  Limited  | Moderate  |   None    | Moderate |  Moderate  |   None    |
+| Binary Size                       | Flexible |  Flexible   |   Large   |     ?     |   Small   |   None   |    None    |   Small   |
+| User Extensibility                |   High   |    High     | Moderate  |    Low    |    Low    |   None   |    None    |   None    |
+| Compiler built-in optimizations   |   Low    |     Low     | Very High |     ?     | Very High |   Low    |  Moderate  | Very High |
+| Long Term Support                 |   Low    |  Very High  | Moderate  |     ?     | Moderate  | Moderate |    Low     | Very High |
+| Ecosystem (without interop)       |  Small   |    Small    | Moderate  |   Small   | Moderate  |  Large   |   Large    |   Large   |
+
 * Installation
 :PROPERTIES:
 :CUSTOM_ID: installation
 :END:
 
-** 1. Install SBCL (or CCL or another Common Lisp compiler or interpreter)
+** Binaries - Trial Basis
 :PROPERTIES:
-:CUSTOM_ID: 1-install-sbcl-or-ccl-or-another-common-lisp-compiler-or-interpreter
+:CUSTOM_ID: binaries---trial-basis
 :END:
 
-*** Mac OS
+Grab a binary from the [[https://github.com/digikar99/moonli/releases/latest][latest release]]. If you want an interactive REPL as in the above gif, grab the binaries with "cl-repl" in their name. 
+
+If you want to run a few moonli files, grab the regular binaries.
+
+However, the cl-repl binaries depend on readline. This can be installed as follows:
+
+- Ubuntu: =sudo apt install libreadline-dev=
+- Mac OS: =brew link readline --force=
+- Windows: =pacman -S mingw-w64-x86_64-readline=
+
+In case of any installation issues, please create an issue on [[https://github.com/digikar99/moonli/issues/new][github]] or [[https://gitlab.com/digikar/moonli/-/issues/new?type=ISSUE][gitlab]].
+
+** From fresh compilers
+:PROPERTIES:
+:CUSTOM_ID: from-fresh-compilers
+:END:
+
+*** 0. Install a package manager
+:PROPERTIES:
+:CUSTOM_ID: 0-install-a-package-manager
+:END:
+
+Mac OS: [[https://brew.sh/][brew]]
 
 #+begin_src
-brew install sbcl
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 #+end_src
 
-** 2. Install ocicl
+Windows: 
+
+- [[https://www.msys2.org/][MSYS2]]: this will install the =pacman= package manager
+- Or [[https://chocolatey.org/install][choco]]
+
+*** 1. Install a compiler and some tools
+:PROPERTIES:
+:CUSTOM_ID: 1-install-a-compiler-and-some-tools
+:END:
+
+- Ubuntu: =sudo apt install git sbcl=
+- Mac OS: =brew install git sbcl=
+- Windows:
+  - =pacman -S git mingw-w64-x86_64-sbcl=
+  - =choco install git sbcl=
+
+Once this step is successful, you should be able to type =sbcl --help= and see something similar to the following:
+
+#+begin_src
+Usage: sbcl [runtime-options] [toplevel-options] [user-options]
+Common runtime options:
+  --help                     Print this message and exit.
+  --version                  Print version information and exit.
+  --core <filename>          Use the specified core file instead of the default.
+  --dynamic-space-size <MiB> Size of reserved dynamic space in megabytes.
+  --control-stack-size <MiB> Size of reserved control stack in megabytes.
+  --tls-limit                Maximum number of thread-local symbols.
+
+Common toplevel options:
+  --sysinit <filename>       System-wide init-file to use instead of default.
+  --userinit <filename>      Per-user init-file to use instead of default.
+  --no-sysinit               Inhibit processing of any system-wide init-file.
+  --no-userinit              Inhibit processing of any per-user init-file.
+  --disable-debugger         Invoke sb-ext:disable-debugger.
+  --noprint                  Run a Read-Eval Loop without printing results.
+  --script [<filename>]      Skip #! line, disable debugger, avoid verbosity.
+  --quit                     Exit with code 0 after option processing.
+  --non-interactive          Sets both --quit and --disable-debugger.
+Common toplevel options that are processed in order:
+  --eval <form>              Form to eval when processing this option.
+  --load <filename>          File to load when processing this option.
+
+User options are not processed by SBCL. All runtime options must
+appear before toplevel options, and all toplevel options must
+appear before user options.
+
+For more information please refer to the SBCL User Manual, which
+should be installed along with SBCL, and is also available from the
+website <http://www.sbcl.org/>.
+#+end_src
+
+*** 2. Install ocicl
 :PROPERTIES:
 :CUSTOM_ID: 2-install-ocicl
 :END:
 
-*** Mac OS
+Follow the instructions at https://github.com/ocicl/ocicl.
+
+Briefly:
+
+- MacOS: =brew install ocicl && ocicl setup=
+- Others:
 
 #+begin_src
-brew install ocicl
+git clone https://github.com/ocicl/ocicl
+cd ocicl
+sbcl --load setup.lisp
 ocicl setup
 #+end_src
 
-Edit the lisp startup file (eg. =~/.sbclrc=) to include the current directory, or
+Edit the compiler init file (eg. =~/.sbclrc=) to include the current directory, or
 
 #+begin_src lisp
 #-ocicl
 (when (probe-file #P"/Users/user/.local/share/ocicl/ocicl-runtime.lisp")
   (load #P"/Users/user/.local/share/ocicl/ocicl-runtime.lisp"))
 (asdf:initialize-source-registry
-  ;; (list :source-registry (list :directory (uiop:getcwd)) :inherit-configuration)
+ ;; (list :source-registry
+ ;;       (list :tree (uiop:strcat (uiop:getenv "HOME") "/Common Lisp/"))
+ ;;       :inherit-configuration)
  (list :source-registry
-       (list :tree (uiop:strcat (uiop:getenv "HOME") "/Common Lisp/"))
+       (list :directory (uiop:getcwd))
        :inherit-configuration))
 #+end_src
 
-** 3. Install moonli
+*** 3. Moonli
 :PROPERTIES:
-:CUSTOM_ID: 3-install-moonli
+:CUSTOM_ID: 3-moonli
 :END:
 
-*** Building basic binary
+**** 3.1. Obtain the source
+:PROPERTIES:
+:CUSTOM_ID: 1-obtain-the-source
+:END:
+
+#+begin_src
+git clone https://github.com/digikar99/moonli
+#+end_src
+
+**** 3.2. Start the REPL
+:PROPERTIES:
+:CUSTOM_ID: 2-start-the-repl
+:END:
+
+#+begin_src
+sbcl --eval '(asdf:load-system "moonli-repl")' --eval '(cl-repl:main)'
+#+end_src
+
+**** 3.3a. (Optional) Building basic binary
+:PROPERTIES:
+:CUSTOM_ID: 3a-optional-building-basic-binary
+:END:
 
 The following should create a =moonli= binary in the root directory of moonli.
 
@@ -171,7 +296,10 @@ Available options:
                              Transpile moonli file to lisp file
 #+end_src
 
-*** Build REPL
+**** 3.3b. (Optional) Build REPL
+:PROPERTIES:
+:CUSTOM_ID: 3b-optional-build-repl
+:END:
 
 The following should create a =cl-repl.moonli= binary in the root directory of moonli.
 
@@ -189,6 +317,7 @@ The following should create a =cl-repl.moonli= binary in the root directory of m
 - DONE Support for declare and declaim
 - TODO Literal syntax for vectors, array access
 - DONE BODMAS rule for parsing expressions
+- DONE Binaries
 - TODO VS Code integration
 - TODO Emacs mode and integration with slime
 - DONE Infix Logical operators
