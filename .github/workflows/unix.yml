@@ -12,8 +12,13 @@ jobs:
     strategy:
       matrix:
         lisp: [sbcl]
-        os: [ubuntu-22.04, ubuntu-24.04, macos-13, macos-14]
-    runs-on: ${{ matrix.os }}
+        runner_os: [
+          [ubuntu-24.04, ubuntu],
+          [ubuntu-24.04-arm, ubuntu],
+          [macos-latest, macos],
+          [macos-13, macos]
+        ]
+    runs-on: ${{ matrix.runner_os[0] }}
 
     steps:
 
@@ -29,13 +34,13 @@ jobs:
 
     - name: Add $CORE and $REPL_CORE
       run: |
-        echo "CORE=moonli-${{ github.ref_name }}.${{ matrix.os }}.$(uname -m)" >> $GITHUB_ENV
-        echo "REPL_CORE=moonli-${{ github.ref_name }}.cl-repl.${{ matrix.os }}.$(uname -m)" >> $GITHUB_ENV
+        echo "CORE=moonli-${{ github.ref_name }}.${{ matrix.runner_os[1] }}.$(uname -m)" >> $GITHUB_ENV
+        echo "REPL_CORE=moonli-${{ github.ref_name }}.cl-repl.${{ matrix.runner_os[1] }}.$(uname -m)" >> $GITHUB_ENV
 
     - name: Download implementation
       env:
         LISP: ${{ matrix.lisp }}
-        OS: ${{ matrix.os }}
+        OS: ${{ matrix.runner_os[1] }}
       run: |
         pwd
         ls -l
@@ -54,7 +59,7 @@ jobs:
         ls $HOME/quicklisp/local-projects/
 
     - name: Install readline (macos)
-      if: startsWith(matrix.OS, 'macos')
+      if: startsWith(matrix.runner_os[1], 'macos')
       run: brew link readline --force
 
     - name: Prepare moonli
