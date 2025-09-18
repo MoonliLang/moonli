@@ -168,17 +168,43 @@ end if"))))
                           (esrap:parse 'macro-call "dummy:if \"hello\" \"world\" \"bye\" end")))))
     (if (find-package "DUMMY") (delete-package "DUMMY"))))
 
+(esrap:defrule lambda-parameter
+    (or (and expr:symbol *whitespace #\= *whitespace moonli-expression)
+        expr:symbol)
+  (:function (lambda (expr)
+               (if (symbolp expr)
+                   expr
+                   (optima:ematch expr
+                     ((list parameter _ _ _ default)
+                      (list parameter default)))))))
+
+(esrap:defrule lambda-parameter-list
+    (or (and #\( *whitespace #\))
+        (and #\(
+             *whitespace
+             lambda-parameter
+             *whitespace
+             (* (and #\, *whitespace lambda-parameter *whitespace))
+             #\))
+        (and #\(
+             (+ (and *whitespace
+                     lambda-parameter
+                     *whitespace #\, *whitespace))
+             #\)))
+  (:function (lambda (expr)
+               (if (null (cdddr expr)) ; length = 3, first or last
+                   (mapcar #'second (second expr))
+                   (cons (third expr) ; middle
+                         (mapcar #'third (fifth expr)))))))
 
 (define-moonli-macro defun
   ((name good-symbol)
    (_ *whitespace)
-   (lambda-list (or (and #\( *whitespace good-symbol *whitespace #\))
-                    expr:list))
+   (lambda-list lambda-parameter-list)
+   (_ *whitespace)
    (_ #\:)
    (body (esrap:? moonli)))
-  `(defun ,name ,(if (eq 'list (first lambda-list))
-                     (rest lambda-list)
-                     `(,(third lambda-list)))
+  `(defun ,name ,lambda-list
      ,@(rest body)))
 
 
@@ -190,21 +216,23 @@ end if"))))
  args
 end defun")))
   (5am:is (equal `(progn
-                    (defun add (&rest args)
+                    (defun add (args)
                       (cond ((null args)
                              0)
                             (t
                              (+ (first args)
                                 (add (rest args)))))))
                  (esrap:parse 'moonli "
-defun add(&rest, args):
+defun add(args):
   if null(args):
     0
   else:
     first(args) + add(rest(args))
   end if
 end
-"))))
+")))
+  (5am:is (equal `(progn (defun foo (&optional (a 5)) a))
+                 (esrap:parse 'moonli "defun foo(&optional, a = 5): a end"))))
 
 (esrap:defrule defpackage-option
     (and string-designator
