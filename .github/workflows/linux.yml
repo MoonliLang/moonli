@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         lisp: [sbcl]
-        os: [ubuntu-22.04, ubuntu-24.04]
+        os: [ubuntu-22.04, ubuntu-24.04, macos-13, macos-14]
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -50,6 +50,10 @@ jobs:
            --eval '(push #P"./" ql:*local-project-directories*)' \
            --eval '(let ((*dependencies-home* (second ql:*local-project-directories*))) (ensure-system "moonli-repl"))'
         ls $HOME/quicklisp/local-projects/
+
+    - name: Install readline (macos)
+      if: startsWith(matrix.OS, 'macos')
+      run: brew link readline --force
 
     - name: Prepare moonli
       run: |
