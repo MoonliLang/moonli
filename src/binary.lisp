@@ -49,7 +49,7 @@
       (uiop:quit 0))
     (when-option (options :version)
       (format t "moonli v~a~&"
-              (asdf:system-version (asdf:find-system "moonli")))
+              (slot-value (asdf:find-system "moonli") 'asdf::version))
       (uiop:quit 0)))
   (loop :initially (write-string "* ")
                    (force-output)
