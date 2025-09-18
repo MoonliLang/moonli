@@ -53,15 +53,10 @@ jobs:
 
 
     - name: Prepare moonli
-      run: cl --eval '(push "./" ql:*local-project-directories*)' --eval '(ql:quickload "moonli")' --eval "(asdf:make :moonli)"
-
-    - name: Prepare cl-repl.moonli
-      run: cl --eval '(push "./" ql:*local-project-directories*)' --eval '(ql:quickload "moonli-repl")' --eval "(asdf:make :moonli-repl)"
-
-    - name: Rename
       run: |
+        cl --eval '(push "./" ql:*local-project-directories*)' --eval '(ql:quickload "moonli")' --eval "(asdf:make :moonli)"
         mv moonli $CORE_NAME
-        mv cl-repl.moonli cl-repl.$CORE_NAME
+
 
     - name: Upload moonli
       uses: actions/upload-artifact@v4
@@ -69,11 +64,6 @@ jobs:
         name: moonli-${{ matrix.os }}-${{ github.ref_name }}
         path: moonli-${{ matrix.os }}-${{ github.ref_name }}
 
-    - name: Upload cl-repl.moonli
-      uses: actions/upload-artifact@v4
-      with:
-        name: cl-repl.moonli-${{ matrix.os }}-${{ github.ref_name }}
-        path: cl-repl.moonli-${{ matrix.os }}-${{ github.ref_name }}
 
     - name: Publish moonli
       uses: SierraSoftworks/gh-releases@v1.0.4
@@ -81,6 +71,20 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         overwrite: 'true'
         files: moonli-${{ matrix.os }}-${{ github.ref_name }}
+
+
+    - name: Prepare cl-repl.moonli
+      run: |
+        cl --eval '(push "./" ql:*local-project-directories*)' --eval '(ql:quickload "moonli-repl")' --eval "(asdf:make :moonli-repl)"
+        mv cl-repl.moonli cl-repl.$CORE_NAME
+
+
+    - name: Upload cl-repl.moonli
+      uses: actions/upload-artifact@v4
+      with:
+        name: cl-repl.moonli-${{ matrix.os }}-${{ github.ref_name }}
+        path: cl-repl.moonli-${{ matrix.os }}-${{ github.ref_name }}
+
 
     - name: Publish cl-repl.moonli
       uses: SierraSoftworks/gh-releases@v1.0.4
