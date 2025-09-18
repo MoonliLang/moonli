@@ -18,10 +18,14 @@ jobs:
 
     defaults:
       run:
-        shell: bash
+        shell: msys2 {0}
 
     steps:
     - uses: actions/checkout@v3
+
+    - uses: msys2/setup-msys2@v2
+      with:
+        install: libzstd-devel git curl
 
     - name: Check $PATH
       run: echo $PATH
@@ -45,6 +49,7 @@ jobs:
 
     - name: Download dependencies
       run: |
+        pacman --noconfirm -S mingw-w64-x86_64-readline
         cl --eval '(ql:quickload "download-dependencies")' \
            --eval '(in-package :download-dependencies)' \
            --eval '(push "./" ql:*local-project-directories*)' \
