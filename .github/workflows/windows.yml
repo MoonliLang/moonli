@@ -81,7 +81,7 @@ jobs:
     - name: Prepare cl-repl.moonli
       run: |
         cl --eval '(push "./" ql:*local-project-directories*)' --eval '(ql:quickload "moonli-repl")' --eval "(asdf:make :moonli-repl)"
-        mv cl-repl.moonli cl-repl.$CORE_NAME
+        mv cl-repl.moonli.exe cl-repl.$CORE_NAME
 
 
     - name: Upload cl-repl.moonli
