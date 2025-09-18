@@ -32,6 +32,7 @@
 (define-moonli-macro let
 
   ((let-bindings let-bindings)
+   (_ *whitespace/internal)
    (_ #\:)
    (let-body (esrap:? moonli)))
 
