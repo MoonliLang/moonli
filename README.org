@@ -12,11 +12,11 @@ Status: Explorative (pre-experimental). It is NOT ready for use in any project, 
 This is a syntax layer that transpiles to Common Lisp.
 
 #+begin_src 
-defun add(&rest, args):
+defun sum(args):
   if null(args):
     0
   else:
-    first(args) + add(rest(args))
+    first(args) + sum(rest(args))
   end
 end
 #+end_src
@@ -24,11 +24,12 @@ end
 transpiles to:
 
 #+begin_src lisp
-(defun add (&rest args)
-  (if (null args)
-      0
-      (+ (first args)
-         (add (rest args)))))
+(defun sum (args)
+   (cond ((null args)
+          0)
+         (t
+          (+ (first args)
+             (sum (rest args))))))
 #+end_src
 
 See [[./moonli-sample.asd]] and [[./sample/sample.moonli]] to include in your project.
@@ -74,11 +75,9 @@ See [[./moonli-sample.asd]] and [[./sample/sample.moonli]] to include in your pr
 :CUSTOM_ID: why
 :END:
 
-I love s-expression based syntaxes of lisps, particularly because of tools like [[http://danmidwood.com/content/2014/11/21/animated-paredit.html][paredit]] and [[https://github.com/abo-abo/lispy][lispy]], as well as [[https://lispcookbook.github.io/cl-cookbook/macros.html][macros]]. But I also acknowledge not every one has the time or patience to become comfortable with them, especially when it comes to reading code.
+Due to tools like [[http://danmidwood.com/content/2014/11/21/animated-paredit.html][paredit]] and [[https://github.com/abo-abo/lispy][lispy]] (beyond [[https://lispcookbook.github.io/cl-cookbook/macros.html][macros]] and metaprogramming), s-expression (Lists) based syntax of lisps is very powerful. However, not every one has the time or patience to become comfortable with them, especially when it comes to reading code, or sharing it with your colleagues.
 
-I also love [[https://common-lisp.net/][Common Lisp]] for [[https://www.quora.com/What-is-your-favourite-non-mainstream-programming-language/answer/Shubhamkar-Ayare][reasons beyond macros]].
-
-Yet, in the 21st century, it is a fact that very many more people are familiar with python, matlab and julia than they are with lisps. Given the power and flexibility of common lisp, my ambitious plan is to get all mainstream languages to transpile to common lisp. The more realistic plan is to create and maintain the "Moonli" syntax layer in this repository.
+In the 21st century, very many more people are familiar with python, matlab and julia than they are with lisps. Given the power and flexibility of common lisp, =moonli= is an attempt to provide a thin syntax layer over common lisp. It is thin in the sense it can be easily transpiled to common lisp. The semantics remain the same and clean as common lisp. ([[https://common-lisp.net/][Common Lisp]] is also good for [[https://www.quora.com/What-is-your-favourite-non-mainstream-programming-language/answer/Shubhamkar-Ayare][reasons beyond macros]].)
 
 * Features
 :PROPERTIES:
@@ -111,22 +110,23 @@ Yet, in the 21st century, it is a fact that very many more people are familiar w
 
 Here's a brief comparison of features across different languages.
 
-| *Features*                          |  *Moonli*  | *Common Lisp* |   *Julia*   |  *Haskell*  |   *Rust*    |  *Python*  | *Javascript* |     *C*     |
-|                                   |   <c>    |     <c>     |    <c>    |    <c>    |    <c>    |   <c>    |    <c>     |    <c>    |
-|-----------------------------------+----------+-------------+-----------+-----------+-----------+----------+------------+-----------|
-| Syntax                            |    +     |      +      |     +     |     +     |    ---    |    +     |     -      |     -     |
-| Interactivity (Rapid Prototyping) |   High   |  Very High  | Moderate  |    Low    |   None    | Moderate |  Moderate  |   None    |
-| Typing (Strong/Weak)              |  Strong  |   Strong    |  Strong   |  Strong   |  Strong   |  Strong  |    Weak    |   Weak    |
-| Typing (Static/Dynamic)           | Flexible |  Flexible   | Flexible  |  Static   |  Static   | Dynamic  |  Dynamic   |  Dynamic  |
-| Typing (Expressivity)             | Flexible |  Flexible   | Moderate  | Very High | Very High |   Low    |    Low     |    Low    |
-| Compiler Speed                    | Flexible |  Flexible   |   Slow    | Moderate  |   Slow    | Moderate |  Moderate  | Moderate  |
-| Runtime Speed                     | Flexible |  Flexible   |   Fast    | Moderate  |   Fast    |   Slow   |  Moderate  |   Fast    |
-| Runtime Error Recovery            | Advanced |  Advanced   |  Limited  | Moderate  |   None    | Moderate |  Moderate  |   None    |
-| Binary Size                       | Flexible |  Flexible   |   Large   |     ?     |   Small   |   None   |    None    |   Small   |
-| User Extensibility                |   High   |    High     | Moderate  |    Low    |    Low    |   None   |    None    |   None    |
-| Compiler built-in optimizations   |   Low    |     Low     | Very High |     ?     | Very High |   Low    |  Moderate  | Very High |
-| Long Term Support                 |   Low    |  Very High  | Moderate  |     ?     | Moderate  | Moderate |    Low     | Very High |
-| Ecosystem (without interop)       |  Small   |    Small    | Moderate  |   Small   | Moderate  |  Large   |   Large    |   Large   |
+| *Features*                          |  *Moonli*  | *Common Lisp* |   *Julia*   |  *Haskell*  |     *Rust*     |  *Python*   | *Javascript* |     *C*     |
+|                                   |   <c>    |     <c>     |    <c>    |    <c>    |     <c>      |    <c>    |    <c>     |    <c>    |
+|-----------------------------------+----------+-------------+-----------+-----------+--------------+-----------+------------+-----------|
+| Syntax                            |    +     |      +      |     +     |     +     |     ---      |     +     |     -      |     -     |
+| Interactivity (Rapid Prototyping) |   High   |  Very High  | Moderate  |    Low    |     None     | Moderate  |  Moderate  |   None    |
+| Typing (Strong/Weak)              |  Strong  |   Strong    |  Strong   |  Strong   |    Strong    |  Strong   |    Weak    |   Weak    |
+| Typing (Static/Dynamic)           | Flexible |  Flexible   | Flexible  |  Static   |    Static    |  Dynamic  |  Dynamic   |  Dynamic  |
+| Typing (Expressivity)             | Flexible |  Flexible   | Moderate  | Very High |  Very High   |    Low    |    Low     |    Low    |
+| Compiler Speed                    | Flexible |  Flexible   |   Slow    | Moderate  |     Slow     | Moderate  |  Moderate  | Moderate  |
+| Runtime Speed                     | Flexible |  Flexible   |   Fast    | Moderate  |     Fast     |   Slow    |  Moderate  |   Fast    |
+| Runtime Error Recovery            | Advanced |  Advanced   |  Limited  | Moderate  |     None     | Moderate  |  Moderate  |   None    |
+| Binary Size                       | Flexible |  Flexible   |   Large   |     ?     |    Small     |   None    |    None    |   Small   |
+| User Extensibility                |   High   |    High     | Moderate  |    Low    |     Low      |   None    |    None    |   None    |
+| Compiler built-in optimizations   |   Low    |     Low     | Very High |     ?     |  Very High   |    Low    |  Moderate  | Very High |
+| Long Term Support                 |   Low    |  Very High  | Moderate  |     ?     |   Moderate   | Moderate  |    Low     | Very High |
+| Ecosystem (without interop)       |  Small   |    Small    | Moderate  |   Small   |   Moderate   |   Large   |   Large    |   Large   |
+| Memory Management                 |   Heap   |    Heap     | Reference |   Heap    | Compile Time | Reference |     ?      |  Manual   |
 
 * Installation
 :PROPERTIES:
@@ -416,6 +416,7 @@ defun fib(n):
     fib(n-1) + fib(n-2)
   end
 end
+#+end_src
 
 ** Dictionaries or Hash-tables
 :PROPERTIES:
@@ -425,7 +426,7 @@ end
 #+begin_src moonli
 {
   :a : 2,
-  \"b\": $cl:progn
+  "b": $cl:progn
 }
 #+end_src
 
@@ -450,7 +451,7 @@ which expands to
 :END:
 
 #+begin_src moonli
-{:a, \"b\" , $cl:progn}
+{:a, "b" , $cl:progn}
 #+end_src
 
 transpiles to
