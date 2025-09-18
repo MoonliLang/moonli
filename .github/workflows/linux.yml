@@ -27,8 +27,10 @@ jobs:
     - name: Check $PATH
       run: echo $PATH
 
-    - name: Add $CORE_NAME
-      run: echo "CORE_NAME=${{ matrix.os }}-moonli-${{ github.ref_name }}" >> $GITHUB_ENV
+    - name: Add $CORE and $REPL_CORE
+      run: |
+        echo "CORE=moonli-${{ github.ref_name }}.${{ matrix.os }}.$(uname -m)" >> $GITHUB_ENV
+        echo "REPL_CORE=moonli-${{ github.ref_name }}.cl-repl.${{ matrix.os }}.$(uname -m)" >> $GITHUB_ENV
 
     - name: Download implementation
       env:
@@ -58,14 +60,14 @@ jobs:
     - name: Prepare moonli
       run: |
         cl --eval '(push "./" ql:*local-project-directories*)' --eval '(ql:quickload "moonli")' --eval "(asdf:make :moonli)"
-        mv moonli $CORE_NAME.bin
+        mv moonli ${{ env.CORE }}.bin
 
 
     - name: Upload moonli
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ matrix.os }}-moonli-${{ github.ref_name }}.bin
-        path: ${{ matrix.os }}-moonli-${{ github.ref_name }}.bin
+        name: ${{ env.CORE }}.bin
+        path: ${{ env.CORE }}.bin
 
 
     - name: Publish moonli
@@ -73,20 +75,20 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         overwrite: 'true'
-        files: ${{ matrix.os }}-moonli-${{ github.ref_name }}.bin
+        files: ${{ env.CORE }}.bin
 
 
     - name: Prepare moonli-cl-repl
       run: |
         cl --eval '(push "./" ql:*local-project-directories*)' --eval '(ql:quickload "moonli-repl")' --eval "(asdf:make :moonli-repl)"
-        mv cl-repl.moonli $CORE_NAME-cl-repl.bin
+        mv cl-repl.moonli ${{ env.REPL_CORE }}.bin
 
 
     - name: Upload moonli-cl-repl
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ matrix.os }}-moonli-${{ github.ref_name }}-cl-repl.bin
-        path: ${{ matrix.os }}-moonli-${{ github.ref_name }}-cl-repl.bin
+        name: ${{ env.REPL_CORE }}.bin
+        path: ${{ env.REPL_CORE }}.bin
 
 
     - name: Publish moonli-cl-repl
@@ -94,4 +96,4 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         overwrite: 'true'
-        files: ${{ matrix.os }}-moonli-${{ github.ref_name }}-cl-repl.bin
+        files: ${{ env.REPL_CORE }}.bin
