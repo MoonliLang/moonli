@@ -14,10 +14,16 @@
       (write-string (subseq string nn)))))
 
 (defun read-moonli-from-stream (stream)
-   (read-moonli-from-string
-     (with-output-to-string (*standard-output*)
-       (loop :while (listen stream)
-          :do (write-char (read-char stream))))))
+  (loop :with text := ""
+        :with readp := t
+        :while readp
+        :do (multiple-value-bind (expr errorp)
+                (ignore-errors
+                 (read-moonli-from-string
+                  (setf text (uiop:strcat text (read-line stream) #\newline))))
+              (unless errorp
+                (setf readp nil)
+                (return expr)))))
 
 (defun read-moonli-from-string (string)
   "NOTE: Some moonli forms like defpackage and in-package can have side-effects."
