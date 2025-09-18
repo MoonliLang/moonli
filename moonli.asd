@@ -28,6 +28,7 @@
   :perform (test-op (c s)
              (eval (read-from-string "(5AM:RUN! :MOONLI)")))
   :perform (program-op (o c)
-             (uiop:dump-image "moonli" :executable t :compression 22))
+             (uiop:dump-image "moonli" :executable t
+                                       :compression #+sb-core-compression 22 #-sb-core-compression nil))
   :build-operation "program-op"
   :entry-point "moonli:main")
