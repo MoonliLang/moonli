@@ -7,7 +7,7 @@ jobs:
 
   build:
 
-    name: ${{ matrix.os }}
+    name: ${{ matrix.runner_os[0] }}
 
     strategy:
       matrix:
@@ -19,6 +19,10 @@ jobs:
           [macos-13, macos]
         ]
     runs-on: ${{ matrix.runner_os[0] }}
+
+    defaults:
+      run:
+        shell: bash
 
     steps:
 
