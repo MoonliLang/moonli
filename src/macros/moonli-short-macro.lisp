@@ -52,3 +52,34 @@
                  (esrap:parse 'short-macro-call "ifelse a 5")))
   (5am:is (equal `(if a :hello :bye)
                  (esrap:parse 'short-macro-call "ifelse a :hello :bye"))))
+
+(define-moonli-short-macro declare
+  ((decl-specs (and expr:function-call
+                    (* (and *whitespace/internal
+                            #\,
+                            *whitespace/internal
+                            expr:function-call)))))
+  `(declare ,(first decl-specs)
+            ,@(mapcar #'fourth (second decl-specs))))
+
+(5am:def-test expr:declare ()
+  (5am:is (equal `(declare (type single-float x y))
+                 (esrap:parse 'short-macro-call "declare type(single-float, x, y)")))
+  (5am:is (equal `(declare (type single-float x y)
+                           (optimize (debug 3)))
+                 (esrap:parse 'short-macro-call "declare type(single-float, x, y), optimize(debug(3))"))))
+
+(define-moonli-short-macro declaim
+  ((decl-specs (and expr:function-call
+                    (* (and *whitespace/internal
+                            #\,
+                            *whitespace/internal
+                            expr:function-call)))))
+  `(declaim ,(first decl-specs)
+            ,@(mapcar #'fourth (second decl-specs))))
+
+(5am:def-test expr:declaim ()
+  (5am:is (equal `(declaim (inline foo))
+                 (esrap:parse 'short-macro-call "declaim inline(foo)")))
+  (5am:is (equal `(declaim (type hash-table *map*))
+                 (esrap:parse 'short-macro-call "declaim type(hash-table, *map*)"))))

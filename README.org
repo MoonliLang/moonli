@@ -186,12 +186,12 @@ The following should create a =cl-repl.moonli= binary in the root directory of m
 
 - DONE Real numbers, strings, characters, lists, infix arithmetic operators, literal hash-tables, literal hash-sets
 - DONE Typing using "expr::type" operator
-- TODO Support for declare and declaim
+- DONE Support for declare and declaim
 - TODO Literal syntax for vectors, array access
 - DONE BODMAS rule for parsing expressions
 - TODO VS Code integration
 - TODO Emacs mode and integration with slime
-- TODO Infix Logical operators
+- DONE Infix Logical operators
 - TODO Add more forms: progn, mvb, dsb, let+, more...
 - TODO Add more tests
 - TODO Reverse transpile from common lisp

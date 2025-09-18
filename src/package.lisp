@@ -14,7 +14,9 @@
            #:defpackage
            #:defvar
            #:defparameter
-           #:in-package))
+           #:in-package
+           #:declare
+           #:declaim))
 
 (defpackage :moonli
   (:use :cl)
