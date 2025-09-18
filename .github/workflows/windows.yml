@@ -31,7 +31,7 @@ jobs:
       run: echo $PATH
 
     - name: Add $CORE_NAME
-      run: echo "CORE_NAME=moonli-${{ matrix.os }}-${{ github.ref_name }}" >> $GITHUB_ENV
+      run: echo "CORE_NAME=${{ matrix.os }}-moonli-${{ github.ref_name }}" >> $GITHUB_ENV
 
     - name: Download implementation
       env:
@@ -60,14 +60,14 @@ jobs:
     - name: Prepare moonli
       run: |
         cl --eval '(push "./" ql:*local-project-directories*)' --eval '(ql:quickload "moonli")' --eval "(asdf:make :moonli)"
-        mv moonli $CORE_NAME
+        mv moonli $CORE_NAME.exe
 
 
     - name: Upload moonli
       uses: actions/upload-artifact@v4
       with:
-        name: moonli-${{ matrix.os }}-${{ github.ref_name }}
-        path: moonli-${{ matrix.os }}-${{ github.ref_name }}
+        name: ${{ matrix.os }}-moonli-${{ github.ref_name }}.exe
+        path: ${{ matrix.os }}-moonli-${{ github.ref_name }}.exe
 
 
     - name: Publish moonli
@@ -75,25 +75,25 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         overwrite: 'true'
-        files: moonli-${{ matrix.os }}-${{ github.ref_name }}
+        files: ${{ matrix.os }}-moonli-${{ github.ref_name }}.exe
 
 
-    - name: Prepare cl-repl.moonli
+    - name: Prepare moonli-cl-repl
       run: |
         cl --eval '(push "./" ql:*local-project-directories*)' --eval '(ql:quickload "moonli-repl")' --eval "(asdf:make :moonli-repl)"
-        mv cl-repl.moonli.exe cl-repl.$CORE_NAME
+        mv cl-repl.moonli.exe $CORE_NAME-cl-repl.exe
 
 
-    - name: Upload cl-repl.moonli
+    - name: Upload moonli-cl-repl
       uses: actions/upload-artifact@v4
       with:
-        name: cl-repl.moonli-${{ matrix.os }}-${{ github.ref_name }}
-        path: cl-repl.moonli-${{ matrix.os }}-${{ github.ref_name }}
+        name: ${{ matrix.os }}-moonli-${{ github.ref_name }}-cl-repl.exe
+        path: ${{ matrix.os }}-moonli-${{ github.ref_name }}-cl-repl.exe
 
 
-    - name: Publish cl-repl.moonli
+    - name: Publish moonli-cl-repl
       uses: SierraSoftworks/gh-releases@v1.0.4
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         overwrite: 'true'
-        files: cl-repl.moonli-${{ matrix.os }}-${{ github.ref_name }}
+        files: ${{ matrix.os }}-moonli-${{ github.ref_name }}-cl-repl.exe
