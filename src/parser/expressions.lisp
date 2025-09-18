@@ -8,8 +8,8 @@
         quoted-expression
         expr:character
         string
-        number
-        good-symbol))
+        good-symbol
+        number))
 
 (esrap:defrule moonli-expression
     (or macro-call

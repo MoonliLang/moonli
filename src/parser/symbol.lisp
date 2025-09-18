@@ -43,7 +43,9 @@
                   (intern symbol-name))))))
 
 (defun good-symbol-p (symbol)
-  (not (member symbol '(end true false elif else)
-               :test #'string-equal)))
+  (not (or (member symbol '(end elif else)
+                   :test #'string-equal)
+           (ignore-errors
+            (parse-number:parse-number (symbol-name symbol))))))
 
 (esrap:defrule good-symbol (good-symbol-p expr:symbol))
