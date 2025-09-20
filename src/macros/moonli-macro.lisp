@@ -343,3 +343,27 @@ end")
   (c,d,e) = list(1,2,3):
   {a,b,c,d,e}
 end"))
+
+(define-moonli-macro lambda
+  ((lambda-list lambda-parameter-list)
+   (_ *whitespace/internal)
+   (_ ":")
+   (_ *whitespace/internal)
+   (body (esrap:? moonli)))
+  `(lambda ,lambda-list ,@(rest body)))
+
+(def-test lambda (macro-call)
+  (:lisp (lambda () nil)
+   :moonli "lambda (): nil end")
+  (:lisp (lambda (x) x)
+   :moonli "lambda (x):
+  x
+end")
+  (:lisp (lambda (x y)
+           (let ((sum (+ x y)))
+             (expt sum 2)))
+   :moonli "lambda (x, y):
+  let sum = x + y:
+    sum ^ 2
+  end
+end"))
