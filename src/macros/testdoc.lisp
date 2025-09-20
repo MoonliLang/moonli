@@ -12,16 +12,22 @@
 (defvar *moonli-macro-snippets* (make-hash-table :test #'eq)
   "Maps moonli macro names to example snippets defined in DEF-TEST forms.")
 
-(defun moonli-macro-snippet (name &key (format :md))
+(defun moonli-macro-snippet (name format)
   (ecase format
     (:md
      (with-output-to-string (*standard-output*)
        (format t "```moonli")
        (loop :for snippet :in (gethash name *moonli-macro-snippets*)
              :do (format t "~%~A~%" snippet))
-       (format t "```")))))
+       (format t "```")))
+    (:org
+     (with-output-to-string (*standard-output*)
+       (format t "#+begin_src moonli")
+       (loop :for snippet :in (gethash name *moonli-macro-snippets*)
+             :do (format t "~%~A~%" snippet))
+       (format t "#+end_src")))))
 
-(defun moonli-macro-transpilation-snippet (name &key (format :md))
+(defun moonli-macro-transpilation-snippet (name format)
   (ecase format
     (:md
      (with-output-to-string (*standard-output*)
@@ -30,7 +36,15 @@
              :do (format t "~%```moonli~%~A~%```~%" moonli)
                  (format t "~%transpiles to~%")
                  (let ((*print-case* :downcase))
-                   (format t "~%```common-lisp~%~A~%```~%" lisp)))))))
+                   (format t "~%```common-lisp~%~A~%```~%" lisp)))))
+    (:org
+     (with-output-to-string (*standard-output*)
+       (loop :for (moonli . lisp)
+               :in (gethash name *moonli-macro-transpilation-snippets*)
+             :do (format t "~%#+begin_src moonli~%~A~%#+end_src~%" moonli)
+                 (format t "~%transpiles to~%")
+                 (let ((*print-case* :downcase))
+                   (format t "~%#+begin_src common-lisp~%~A~%#+end_src~%" lisp)))))))
 
 (defvar *moonli-macro-transpilation-snippets* (make-hash-table :test #'eq)
   "Maps moonli macro names to example snippet transpilations defined in DEF-TEST forms.")
