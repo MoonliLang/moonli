@@ -45,10 +45,12 @@
                             end)))
     `(progn ,@(nreverse exprs))))
 
-(defun load-moonli-file (source-file fasl-file)
-  (if (string= "fasl" (pathname-type source-file))
-      (load source-file)
-      (error "Don't know how to load when source-file is ~S and fasl-file is ~S" source-file fasl-file)))
+(defun load-moonli-file (moonli-file &key (transpile t))
+  (assert (string= "moonli" (pathname-type moonli-file)))
+  (if transpile
+      (load (transpile-moonli-file moonli-file))
+      (eval (read-moonli-from-string
+             (alexandria:read-file-into-string moonli-file)))))
 
 (defun transpile-moonli-file (moonli-file)
   (format *standard-output* "; transpiling ~A~%" (namestring moonli-file))

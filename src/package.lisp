@@ -29,6 +29,7 @@
            #:moonli-string-to-lisp-string
            #:compile-moonli-file
            #:load-moonli-file
+           #:transpile-moonli-file
            #:define-moonli-macro
            #:define-moonli-short-macro
 
