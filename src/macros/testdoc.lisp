@@ -27,6 +27,9 @@
              :do (format t "~%~A~%" snippet))
        (format t "#+end_src")))))
 
+(defvar *moonli-macro-transpilation-snippets* (make-hash-table :test #'eq)
+  "Maps moonli macro names to example snippet transpilations defined in DEF-TEST forms.")
+
 (defun moonli-macro-transpilation-snippet (name format)
   (ecase format
     (:md
@@ -45,9 +48,6 @@
                  (format t "~%transpiles to~%")
                  (let ((*print-case* :downcase))
                    (format t "~%#+begin_src common-lisp~%~A~%#+end_src~%" lisp)))))))
-
-(defvar *moonli-macro-transpilation-snippets* (make-hash-table :test #'eq)
-  "Maps moonli macro names to example snippet transpilations defined in DEF-TEST forms.")
 
 (defmacro def-test (name (default-expr) &body target-transpilations)
   "Each element of TARGET-TRANSPILATIONS must be a plist with keys LISP and MOONLI. Optionally, it may have an entry for EXPR that overrides DEFAULT-EXPR"
