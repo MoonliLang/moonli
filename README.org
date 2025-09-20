@@ -22,7 +22,7 @@ Moonli is a beautiful programming language with a simple syntax and a very inter
     - [[#1-install-a-compiler-and-some-tools][1. Install a compiler and some tools]]
     - [[#2-install-ocicl][2. Install ocicl]]
     - [[#3-moonli][3. Moonli]]
-- [[#syntax][Syntax]]
+- [[#a-short-tutorial][A Short Tutorial]]
   - [[#global-variables][Global variables]]
   - [[#local-variables][Local variables]]
   - [[#symbols][Symbols]]
@@ -31,6 +31,16 @@ Moonli is a beautiful programming language with a simple syntax and a very inter
   - [[#dictionaries-or-hash-tables][Dictionaries or Hash-tables]]
   - [[#sets-or-hash-sets][Sets or Hash-sets]]
   - [[#infix-operators][Infix operators]]
+  - [[#lm][lm]]
+  - [[#declaim][declaim]]
+  - [[#declare][declare]]
+  - [[#ifelse][ifelse]]
+  - [[#lambda][lambda]]
+  - [[#let][let+]]
+  - [[#loop][loop]]
+  - [[#defun][defun]]
+  - [[#if][if]]
+  - [[#let-0][let]]
 :END:
 
 
@@ -216,7 +226,7 @@ The following should create a =cl-repl.moonli= binary in the root directory of m
 
 * A Short Tutorial
 :PROPERTIES:
-:CUSTOM_ID: syntax
+:CUSTOM_ID: a-short-tutorial
 :END:
 
 Moonli follows the idiom "everything is an expression". Thus, one does not need to worry about statements and expressions.
@@ -336,6 +346,9 @@ The following infix operators are recognized:
 - < <= == != >= > 
 
 ** lm
+:PROPERTIES:
+:CUSTOM_ID: lm
+:END:
 
 #+begin_src moonli
 lm (): nil
@@ -346,6 +359,9 @@ lm (x, y): x + y
 #+end_src
 
 ** declaim
+:PROPERTIES:
+:CUSTOM_ID: declaim
+:END:
 
 #+begin_src moonli
 declaim inline(foo)
@@ -354,6 +370,9 @@ declaim type(hash-table, *map*)
 #+end_src
 
 ** declare
+:PROPERTIES:
+:CUSTOM_ID: declare
+:END:
 
 #+begin_src moonli
 declare type(single-float, x, y)
@@ -362,6 +381,9 @@ declare type(single-float, x, y), optimize(debug(3))
 #+end_src
 
 ** ifelse
+:PROPERTIES:
+:CUSTOM_ID: ifelse
+:END:
 
 #+begin_src moonli
 ifelse a 5
@@ -371,6 +393,9 @@ ifelse a :hello :bye
 
 
 ** lambda
+:PROPERTIES:
+:CUSTOM_ID: lambda
+:END:
 
 #+begin_src moonli
 lambda (): nil end
@@ -387,6 +412,9 @@ end
 #+end_src
 
 ** let+
+:PROPERTIES:
+:CUSTOM_ID: let
+:END:
 
 #+begin_src moonli
 let-plus:let+ x = 42: x
@@ -408,6 +436,9 @@ end
 #+end_src
 
 ** loop
+:PROPERTIES:
+:CUSTOM_ID: loop
+:END:
 
 #+begin_src moonli
 loop end loop
@@ -422,6 +453,9 @@ end
 #+end_src
 
 ** defun
+:PROPERTIES:
+:CUSTOM_ID: defun
+:END:
 
 #+begin_src moonli
 defun our-identity(x): x end
@@ -442,6 +476,9 @@ defun foo(&optional, a = 5): a end
 #+end_src
 
 ** if
+:PROPERTIES:
+:CUSTOM_ID: if
+:END:
 
 #+begin_src moonli
 if a: b end if
@@ -489,6 +526,9 @@ end if
 #+end_src
 
 ** let
+:PROPERTIES:
+:CUSTOM_ID: let-0
+:END:
 
 #+begin_src moonli
 let a = 2, b = 3:

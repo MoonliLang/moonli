@@ -55,6 +55,16 @@ See [[./moonli-sample.asd]] and [[./sample/sample.moonli]] to include in your pr
   - [[#dictionaries-or-hash-tables][Dictionaries or Hash-tables]]
   - [[#sets-or-hash-sets][Sets or Hash-sets]]
   - [[#infix-operators][Infix operators]]
+  - [[#lm][lm]]
+  - [[#declaim][declaim]]
+  - [[#declare][declare]]
+  - [[#ifelse][ifelse]]
+  - [[#lambda][lambda]]
+  - [[#let][let+]]
+  - [[#loop][loop]]
+  - [[#defun][defun]]
+  - [[#if][if]]
+  - [[#let-0][let]]
 :END:
 
 * Why
@@ -292,6 +302,9 @@ The following infix operators are recognized:
 - < <= == != >= >
 
 ** lm
+:PROPERTIES:
+:CUSTOM_ID: lm
+:END:
 
 
 #+begin_src moonli
@@ -326,6 +339,9 @@ transpiles to
 
 
 ** declaim
+:PROPERTIES:
+:CUSTOM_ID: declaim
+:END:
 
 
 #+begin_src moonli
@@ -350,6 +366,9 @@ transpiles to
 
 
 ** declare
+:PROPERTIES:
+:CUSTOM_ID: declare
+:END:
 
 
 #+begin_src moonli
@@ -375,6 +394,9 @@ transpiles to
 
 
 ** ifelse
+:PROPERTIES:
+:CUSTOM_ID: ifelse
+:END:
 
 
 #+begin_src moonli
@@ -403,6 +425,9 @@ transpiles to
 
 
 ** lambda
+:PROPERTIES:
+:CUSTOM_ID: lambda
+:END:
 
 
 #+begin_src moonli
@@ -445,6 +470,9 @@ transpiles to
 
 
 ** let+
+:PROPERTIES:
+:CUSTOM_ID: let
+:END:
 
 
 #+begin_src moonli
@@ -502,6 +530,9 @@ transpiles to
 
 
 ** loop
+:PROPERTIES:
+:CUSTOM_ID: loop
+:END:
 
 
 #+begin_src moonli
@@ -542,6 +573,9 @@ transpiles to
 
 
 ** defun
+:PROPERTIES:
+:CUSTOM_ID: defun
+:END:
 
 
 #+begin_src moonli
@@ -594,6 +628,9 @@ transpiles to
 
 
 ** if
+:PROPERTIES:
+:CUSTOM_ID: if
+:END:
 
 
 #+begin_src moonli
@@ -721,6 +758,9 @@ transpiles to
 
 
 ** let
+:PROPERTIES:
+:CUSTOM_ID: let-0
+:END:
 
 
 #+begin_src moonli
