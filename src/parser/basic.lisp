@@ -2,50 +2,53 @@
 
 (esrap:defrule whitespace/internal
     (or #\Space #\Tab)
-  (:constant nil))
+  (:constant nil)
+  (:error-report nil))
 
 (esrap:defrule *whitespace/internal
     (* whitespace/internal)
-  (:constant nil))
+  (:constant nil)
+  (:error-report nil))
 
 (esrap:defrule +whitespace/internal
     (+ whitespace/internal)
-  (:constant nil))
+  (:constant nil)
+  (:error-report nil))
 
 (esrap:defrule whitespace/end
     (or #\newline #\return #\;)
-  (:constant nil))
+  (:constant nil)
+  (:error-report nil))
 
 (esrap:defrule whitespace
     (or #\space #\tab #\newline #\return)
-  (:constant nil))
+  (:constant nil)
+  (:error-report nil))
 
 (esrap:defrule +whitespace
     (+ whitespace)
-  (:constant nil))
+  (:constant nil)
+  (:error-report nil))
 
 (esrap:defrule *whitespace
     (* whitespace)
-  (:constant nil))
+  (:constant nil)
+  (:error-report nil))
 
 (esrap:defrule *whitespace/end
     (* whitespace/end)
-  (:constant nil))
+  (:constant nil)
+  (:error-report nil))
 
 (esrap:defrule *whitespace/all
     (* (or whitespace/end whitespace/internal))
-  (:constant nil))
+  (:constant nil)
+  (:error-report nil))
 
-(esrap:defrule open-bracket
-    (and (or #\( #\[ #\{) *whitespace)
-  (:function first))
-(esrap:defrule close-bracket
-    (and (or #\) #\] #\}) *whitespace)
-  (:function first))
-
-(esrap:defrule numeric-character (esrap:character-ranges (#\0 #\9)))
+(esrap:defrule numeric-character (esrap:character-ranges (#\0 #\9))
+  (:error-report :context))
 
 (esrap:defrule non-symbol-chars
-    (or #\| #\: #\, #\$ #\' #\" open-bracket close-bracket
-        whitespace/internal whitespace/end))
-
+    (or #\| #\: #\, #\$ #\' #\" #\( #\[ #\{ #\) #\] #\}
+        whitespace/internal whitespace/end)
+  (:error-report nil))
