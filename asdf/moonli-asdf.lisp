@@ -14,4 +14,7 @@
 (defmethod perform ((o load-op) (c moonli-file))
   (let ((moonli-file (first (input-files o c)))
         (fasl-file   (first (output-files o c))))
-    (moonli:load-moonli-file moonli-file fasl-file)))
+    (declare (ignore fasl-file))
+    (if (string-equal "fasl" (pathname-type moonli-file))
+        (load moonli-file)
+        (moonli:load-moonli-file moonli-file :transpile nil))))
