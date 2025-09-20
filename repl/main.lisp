@@ -16,7 +16,17 @@ ___  ___                      _  _  ______  _____ ______  _
 (setf *read-function* 'moonli:read-moonli-from-string)
 (setf *line-continue-function*
       (lambda (string)
-        (nth-value 1 (ignore-errors (moonli:read-moonli-from-string string)))))
+        (let* ((ends-with-newlines
+                 (alexandria:ends-with-subseq (format nil "~%") string))
+               (expr-errors-p
+                 ;; The resulting expression produces an error
+                 (nth-value 1
+                            (ignore-errors
+                             (moonli:read-moonli-from-string string)))))
+          (if ends-with-newlines
+              ;; Don't continue if there are no newlines at end
+              nil
+              expr-errors-p))))
 
 (setf *versions*
   (format nil "moonli-repl ~a on ~?~a ~a"
