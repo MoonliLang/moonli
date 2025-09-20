@@ -1,17 +1,20 @@
 (in-package :moonli)
 
 (defun format-moonli-parse-error (string position)
+  ;; Find the distance of POSITION from the preceding and next newline
   (let* ((pn (position #\newline string :end position :from-end t))
          (nn (position #\newline string :start position))
-         (start-dist (if pn (- position pn) 0))
-         (end-dist (if nn (- nn position) (length string))))
+         ;; START-DIST: Distance from preceding newline
+         (start-dist (if pn (- position pn) position))
+         ;; END-DIST: DIstance to next newline
+         (end-dist (if nn (- nn position) (- (length string) position))))
     (with-output-to-string (*standard-output*)
       (write-string (subseq string 0 nn))
       (write-char #\newline)
       (loop :repeat start-dist :do (write-char #\-))
       (write-char #\^)
       (loop :repeat (- end-dist 2) :do (write-char #\-))
-      (write-string (subseq string nn)))))
+      (when nn (write-string (subseq string nn))))))
 
 (defun read-moonli-from-stream (stream)
   (loop :with text := ""
