@@ -1,6 +1,5 @@
 (in-package :moonli)
 
-;; FIXME: Do something about the excess whitespace
 (5am:in-suite :moonli)
 
 (define-moonli-short-macro defvar
@@ -11,6 +10,10 @@
    (value moonli-expression))
   `(defvar ,name ,value))
 
+(def-test defvar (short-macro-call)
+  (:lisp (defvar a 5)
+   :moonli "defvar a = 5"))
+
 (define-moonli-short-macro defparameter
   ((name good-symbol)
    (_ +whitespace/internal)
@@ -19,12 +22,16 @@
    (value moonli-expression))
   `(defparameter ,name ,value))
 
+(def-test defparameter (short-macro-call)
+  (:lisp (defparameter a 5)
+   :moonli "defparameter a = 5"))
+
 (define-moonli-short-macro in-package
   ((name expr:symbol))
   (setf *package* (find-package name))
   `(in-package ,name))
 
-(5am:def-test expr:in-package ()
+(5am:def-test moonli/macro-tests::|common-lisp::in-package| ()
   (unwind-protect
        (progn
          (make-package "MOONLI/TEST/IN-PACKAGE")
@@ -43,15 +50,11 @@
    (else (esrap:? moonli-expression)))
   `(if ,test ,then ,else))
 
-(5am:def-test short-macro-call ()
-  (5am:is (equal `(defvar a 5)
-                 (esrap:parse 'short-macro-call "defvar a = 5")))
-  (5am:is (equal `(defparameter a 5)
-                 (esrap:parse 'short-macro-call "defparameter a = 5")))
-  (5am:is (equal `(if a 5 nil)
-                 (esrap:parse 'short-macro-call "ifelse a 5")))
-  (5am:is (equal `(if a :hello :bye)
-                 (esrap:parse 'short-macro-call "ifelse a :hello :bye"))))
+(def-test ifelse (short-macro-call)
+  (:lisp (if a 5 nil)
+   :moonli "ifelse a 5")
+  (:lisp (if a :hello :bye)
+   :moonli "ifelse a :hello :bye"))
 
 (define-moonli-short-macro declare
   ((decl-specs (and expr:function-call
@@ -62,12 +65,12 @@
   `(declare ,(first decl-specs)
             ,@(mapcar #'fourth (second decl-specs))))
 
-(5am:def-test expr:declare ()
-  (5am:is (equal `(declare (type single-float x y))
-                 (esrap:parse 'short-macro-call "declare type(single-float, x, y)")))
-  (5am:is (equal `(declare (type single-float x y)
-                           (optimize (debug 3)))
-                 (esrap:parse 'short-macro-call "declare type(single-float, x, y), optimize(debug(3))"))))
+(def-test declare (short-macro-call)
+  (:lisp (declare (type single-float x y))
+   :moonli "declare type(single-float, x, y)")
+  (:lisp (declare (type single-float x y)
+                   (optimize (debug 3)))
+   :moonli "declare type(single-float, x, y), optimize(debug(3))"))
 
 (define-moonli-short-macro declaim
   ((decl-specs (and expr:function-call
@@ -78,24 +81,24 @@
   `(declaim ,(first decl-specs)
             ,@(mapcar #'fourth (second decl-specs))))
 
-(5am:def-test expr:declaim ()
-  (5am:is (equal `(declaim (inline foo))
-                 (esrap:parse 'short-macro-call "declaim inline(foo)")))
-  (5am:is (equal `(declaim (type hash-table *map*))
-                 (esrap:parse 'short-macro-call "declaim type(hash-table, *map*)"))))
+(def-test declaim (short-macro-call)
+  (:lisp (declaim (inline foo))
+   :moonli "declaim inline(foo)")
+  (:lisp (declaim (type hash-table *map*))
+   :moonli "declaim type(hash-table, *map*)"))
 
-(define-moonli-short-macro lambda
+(define-moonli-short-macro lm
   ((lambda-list lambda-parameter-list)
    (_ *whitespace/internal)
-   (_ #\:)
+   (_ ":")
    (_ *whitespace/internal)
    (form moonli-expression))
   `(lambda ,lambda-list ,form))
 
-(5am:def-test expr:lambda ()
-  (5am:is (equal `(lambda () nil)
-                 (esrap:parse 'short-macro-call "lambda (): nil")))
-  (5am:is (equal `(lambda (x) x)
-                 (esrap:parse 'short-macro-call "lambda (x): x")))
-  (5am:is (equal `(lambda (x y) (+ x y))
-                 (esrap:parse 'short-macro-call "lambda (x, y): x + y"))))
+(def-test lm (short-macro-call)
+  (:lisp (lambda () nil)
+   :moonli "lm (): nil")
+  (:lisp (lambda (x) x)
+   :moonli "lm (x): x")
+  (:lisp (lambda (x y) (+ x y))
+   :moonli "lm (x, y): x + y"))

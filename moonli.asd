@@ -22,7 +22,8 @@
                              (:file "infix")
                              (:file "expressions")))
                (:module "macros"
-                :components ((:file "moonli-macro")
+                :components ((:file "testdoc")
+                             (:file "moonli-macro")
                              (:file "moonli-short-macro")))
                (:file "moonli")
                (:file "binary"))

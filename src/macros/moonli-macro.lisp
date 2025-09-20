@@ -1,7 +1,6 @@
 (in-package :moonli)
 
 (5am:in-suite :moonli)
-;; FIXME: Do something about the excess whitespace
 
 (esrap:defrule let-bindings
     (or (and (and good-symbol
@@ -39,20 +38,19 @@
   `(let ,let-bindings
      ,@(rest let-body)))
 
-(5am:def-test expr:let ()
-  (5am:is (equal `(let ((a 2) (b 3))
-                    (+ a b))
-                 (esrap:parse 'macro-call
-                              "let a = 2, b = 3:
+(def-test let (macro-call)
+  (:lisp (let ((a 2) (b 3))
+           (+ a b))
+   :moonli "let a = 2, b = 3:
    a + b
-end")))
-  (5am:is (equal `(let ((a 2) (b 3))
-                    (+ a b))
-                 (esrap:parse 'macro-call
-                              "let a = 2, b = 3:
+end")
+  (:lisp (let ((a 2) (b 3))
+           (+ a b))
+   :moonli "let a = 2, b = 3:
    a + b
-end let")
-                 )))
+end let"))
+
+
 
 (esrap:defrule elif-clause
     (and *whitespace
@@ -83,66 +81,64 @@ end let")
           ,@(rest else-part))))
 
 
-(5am:def-test expr:if ()
-  (5am:is (equal `(cond (a b) (t))
-                 (esrap:parse 'macro-call "if a: b
-end if")))
-  (5am:is (equal `(cond (a b c) (t))
-                 (esrap:parse 'macro-call "if a:
+(def-test if (macro-call)
+  (:lisp (cond (a b) (t))
+   :moonli "if a: b end if")
+  (:lisp (cond (a b c) (t))
+   :moonli "if a:
   b; c
-end")))
-  (5am:is (equal `(cond (a b) (t c))
-                 (esrap:parse 'macro-call "if a: b
+end")
+  (:lisp (cond (a b) (t c))
+   :moonli "if a: b
 else: c
-end if")))
-  (5am:is (equal `(cond (a b d) (t c e))
-                 (esrap:parse 'macro-call "if a:
+end if")
+  (:lisp (cond (a b d) (t c e))
+   :moonli "if a:
    b; d
 else:
    c; e
-end if")))
-  (5am:is (equal `(cond (a b) (c d e) (t f))
-                 (esrap:parse 'macro-call "if a: b
+end if")
+  (:lisp (cond (a b) (c d e) (t f))
+   :moonli "if a: b
 elif c: d; e
 else: f
-end if")))
-  (5am:is (equal `(the boolean (cond (a b) (t c)))
-                 (esrap:parse 'moonli-expression
-                              "(if a: b else: c; end)::boolean")))
-  (5am:is (equal `(cond ((null args)
-                         0)
-                        (t
-                         1))
-                 (esrap:parse 'macro-call "if null(args): 0; else: 1 end")))
-  (5am:is (equal `(cond ((null args)
-                         0)
-                        (t
-                         (first args)))
-                 (esrap:parse 'macro-call "if null(args):
+end if")
+  (:lisp (the boolean (cond (a b) (t c)))
+   :moonli "(if a: b else: c; end)::boolean"
+   :expr moonli-expression)
+  (:lisp (cond ((null args)
+                0)
+               (t
+                1))
+   :moonli "if null(args): 0; else: 1 end")
+  (:lisp (cond ((null args)
+                0)
+               (t
+                (first args)))
+   :moonli "if null(args):
     0
 else:
     first(args)
-end if")))
-
-  (5am:is (equal `(cond ((null args)
-                         0)
-                        (t
-                         (+ 2 3)))
-                 (esrap:parse 'macro-call "if null(args):
+end if")
+  (:lisp (cond ((null args)
+                0)
+               (t
+                (+ 2 3)))
+   :moonli "if null(args):
   0
 else:
   2 + 3
-end if")))
-  (5am:is (equal `(cond ((null args)
-                         0)
-                        (t
-                         (+ (first args)
-                            (add (rest args)))))
-                 (esrap:parse 'macro-call "if null(args):
+end if")
+  (:lisp (cond ((null args)
+                0)
+               (t
+                (+ (first args)
+                   (add (rest args)))))
+   :moonli "if null(args):
   0
 else:
   first(args) + add(rest(args))
-end if"))))
+end if"))
 
 
 
@@ -209,31 +205,31 @@ end if"))))
      ,@(rest body)))
 
 
-(5am:def-test expr:defun ()
-  (5am:is (equal `(defun our-identity (x) x)
-                 (esrap:parse 'macro-call "defun our-identity(x): x end")))
-  (5am:is (equal `(defun add (&rest args) args)
-                 (esrap:parse 'macro-call "defun add (&rest, args):
+(def-test defun (macro-call)
+  (:moonli "defun our-identity(x): x end"
+   :lisp (defun our-identity (x) x))
+  (:moonli "defun add (&rest, args):
  args
-end defun")))
-  (5am:is (equal `(progn
-                    (defun add (args)
-                      (cond ((null args)
-                             0)
-                            (t
-                             (+ (first args)
-                                (add (rest args)))))))
-                 (esrap:parse 'moonli "
-defun add(args):
+end defun"
+   :lisp (defun add (&rest args) args))
+  (:expr moonli-expression
+   :moonli "defun add(args):
   if null(args):
     0
   else:
     first(args) + add(rest(args))
   end if
-end
-")))
-  (5am:is (equal `(progn (defun foo (&optional (a 5)) a))
-                 (esrap:parse 'moonli "defun foo(&optional, a = 5): a end"))))
+end"
+   :lisp (defun add (args)
+           (cond ((null args)
+                  0)
+                 (t
+                  (+ (first args)
+                     (add (rest args)))))))
+  (:expr moonli-expression
+   :moonli "defun foo(&optional, a = 5): a end"
+   :lisp (defun foo (&optional (a 5)) a)))
+
 
 (esrap:defrule defpackage-option
     (and string-designator
@@ -272,17 +268,17 @@ end
   ((body (esrap:? moonli)))
   `(loop ,@(rest body)))
 
-(5am:def-test expr:loop ()
-  (5am:is (equal `(loop)
-                 (esrap:parse 'macro-call "loop end loop")))
-  (5am:is (equal `(loop :repeat n :do (print "hello"))
-                 (esrap:parse 'macro-call "loop :repeat n :do
+(def-test loop (macro-call)
+  (:lisp (loop)
+   :moonli "loop end loop")
+  (:lisp (loop :repeat n :do (print "hello"))
+   :moonli "loop :repeat n :do
   print(\"hello\")
-end")))
-  (5am:is (equal `(loop :for i :below n :do (print (+ i 1)))
-                 (esrap:parse 'macro-call "loop :for i :below n :do
+end")
+  (:lisp (loop :for i :below n :do (print (+ i 1)))
+   :moonli "loop :for i :below n :do
   print(i + 1)
-end"))))
+end"))
 
 
 (esrap:defrule let+-binding
@@ -325,25 +321,25 @@ end"))))
   `(let-plus:let+ ,let-bindings
      ,@(rest let-body)))
 
-(5am:def-test let-plus:let+ ()
-  (5am:is (equal `(let-plus:let+ ((x 42)) x)
-                 (esrap:parse 'macro-call "let-plus:let+ x = 42: x
-end")))
-  (5am:is (equal `(let-plus:let+ (((a b) (list 1 2)))
-                    (+ a b))
-                 (esrap:parse 'macro-call "let-plus:let+ (a,b) = list(1,2):
+(def-test let-plus:let+ (macro-call)
+  (:lisp (let-plus:let+ ((x 42)) x)
+   :moonli "let-plus:let+ x = 42: x
+end")
+  (:lisp (let-plus:let+ (((a b) (list 1 2)))
+           (+ a b))
+   :moonli "let-plus:let+ (a,b) = list(1,2):
   a + b
-end")))
-  (5am:is (equal `(let-plus:let+ (((let-plus:&values a b) (list 1 2)))
-                    (+ a b))
-                 (esrap:parse 'macro-call "let-plus:let+ let-plus:&values(a,b) = list(1,2):
+end")
+  (:lisp (let-plus:let+ (((let-plus:&values a b) (list 1 2)))
+           (+ a b))
+   :moonli "let-plus:let+ let-plus:&values(a,b) = list(1,2):
   a + b
-end")))
-  (5am:is (equal `(let-plus:let+ (((let-plus:&values a b) (list 1 2))
-                                  ((c d e) (list 1 2 3)))
-                    (fill-hash-set a b c d e))
-                 (esrap:parse 'macro-call "let-plus:let+
+end")
+  (:lisp (let-plus:let+ (((let-plus:&values a b) (list 1 2))
+                         ((c d e) (list 1 2 3)))
+           (fill-hash-set a b c d e))
+   :moonli "let-plus:let+
   let-plus:&values(a,b) = list(1,2),
   (c,d,e) = list(1,2,3):
   {a,b,c,d,e}
-end"))))
+end"))
