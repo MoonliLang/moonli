@@ -44,11 +44,11 @@ Moonli is a beautiful programming language with a simple syntax and a very inter
 :CUSTOM_ID: binaries
 :END:
 
-Grab a binary from the [[https://github.com/digikar99/moonli/releases/latest][latest release]]. If you want an interactive REPL as in the above gif, grab the binaries with "cl-repl" in their name. 
+Grab a binary from the [[https://github.com/digikar99/moonli/releases/latest][latest release]]. If you want an interactive REPL as in the above gif, grab the binaries with "repl" in their name. 
 
 If you want to run a few moonli files, grab the regular binaries.
 
-However, the cl-repl binaries depend on readline. This can be installed as follows:
+However, the repl binaries depend on readline. This can be installed as follows:
 
 - Ubuntu: =sudo apt install libreadline-dev=
 - Mac OS: =brew link readline --force=

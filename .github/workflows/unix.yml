@@ -90,7 +90,7 @@ jobs:
     - name: Prepare moonli-cl-repl
       run: |
         cl --eval '(push "./" ql:*local-project-directories*)' --eval '(ql:quickload "moonli-repl")' --eval "(asdf:make :moonli-repl)"
-        mv cl-repl.moonli ${{ env.REPL_CORE }}.bin
+        mv moonli.repl ${{ env.REPL_CORE }}.bin
 
 
     - name: Upload moonli-cl-repl
