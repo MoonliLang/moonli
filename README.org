@@ -1,63 +1,27 @@
-#+title: Moonli - Algol-style syntax that transpiles to Common Lisp
+#+title: Moonli Programming Language
 
 #+begin_quote
 Status: Explorative (pre-experimental). It is NOT ready for use in any project, not even if it is a throwaway project.
+
+If you are a lisper, see [[file:README-CL.org]].
 #+end_quote
 
-* What
-:PROPERTIES:
-:CUSTOM_ID: what
-:END:
-
-This is a syntax layer that transpiles to Common Lisp.
-
-#+begin_src 
-defun sum(args):
-  if null(args):
-    0
-  else:
-    first(args) + sum(rest(args))
-  end
-end
-#+end_src
-
-transpiles to:
-
-#+begin_src lisp
-(defun sum (args)
-   (cond ((null args)
-          0)
-         (t
-          (+ (first args)
-             (sum (rest args))))))
-#+end_src
-
-See [[./moonli-sample.asd]] and [[./sample/sample.moonli]] to include in your project.
-
-#+attr_html: :width 640px
-[[./repl/repl.gif]]
+Moonli is a beautiful programming language with a simple syntax and a very interactive development experience. This enables rapidly prototyping new programs. At the same time, once a prototype is ready, the programs can also be optimized for runtime performance as well as long term maintenance.
 
 * Table of Contents
 :PROPERTIES:
-:TOC:      :include all :depth 4
+:TOC:      :include all :depth 3 :ignore this
 :CUSTOM_ID: table-of-contents
 :END:
 
 :CONTENTS:
-- [[#what][What]]
-- [[#table-of-contents][Table of Contents]]
-- [[#why][Why]]
-- [[#features][Features]]
-  - [[#for-lispers][For lispers]]
-  - [[#for-programmers-in-general][For programmers in general]]
 - [[#installation][Installation]]
-  - [[#binaries---trial-basis][Binaries - Trial Basis]]
+  - [[#binaries][Binaries]]
   - [[#from-fresh-compilers][From fresh compilers]]
     - [[#0-install-a-package-manager][0. Install a package manager]]
     - [[#1-install-a-compiler-and-some-tools][1. Install a compiler and some tools]]
     - [[#2-install-ocicl][2. Install ocicl]]
     - [[#3-moonli][3. Moonli]]
-- [[#plan][Plan]]
 - [[#syntax][Syntax]]
   - [[#global-variables][Global variables]]
   - [[#local-variables][Local variables]]
@@ -70,72 +34,14 @@ See [[./moonli-sample.asd]] and [[./sample/sample.moonli]] to include in your pr
 :END:
 
 
-* Why
-:PROPERTIES:
-:CUSTOM_ID: why
-:END:
-
-Due to tools like [[http://danmidwood.com/content/2014/11/21/animated-paredit.html][paredit]] and [[https://github.com/abo-abo/lispy][lispy]] (beyond [[https://lispcookbook.github.io/cl-cookbook/macros.html][macros]] and metaprogramming), s-expression (Lists) based syntax of lisps is very powerful. However, not every one has the time or patience to become comfortable with them, especially when it comes to reading code, or sharing it with your colleagues.
-
-In the 21st century, very many more people are familiar with python, matlab and julia than they are with lisps. Given the power and flexibility of common lisp, =moonli= is an attempt to provide a thin syntax layer over common lisp. It is thin in the sense it can be easily transpiled to common lisp. The semantics remain the same and clean as common lisp. ([[https://common-lisp.net/][Common Lisp]] is also good for [[https://www.quora.com/What-is-your-favourite-non-mainstream-programming-language/answer/Shubhamkar-Ayare][reasons beyond macros]].)
-
-* Features
-:PROPERTIES:
-:CUSTOM_ID: features
-:END:
-
-** For common lispers
-:PROPERTIES:
-:CUSTOM_ID: for-lispers
-:END:
-
-- Case sensitive, but invert-case reader to maintain common lisp compatibility
-- Transpile to common lisp, so lispers need not "learn a new language"
-- Extensible using =moonli:define-moonli-macro= and =moonli:define-short-moonli-macro=. See [[./src/macros/]] directory for examples.
-- Inability to access internal symbols of another package through "A::B" syntax; this syntax rather translates to =(the B A)=
-
-** For programmers in general
-:PROPERTIES:
-:CUSTOM_ID: for-programmers-in-general
-:END:
-
-- Sane variable scoping rules as given by common lisp
-- Sane namespace scoping thanks to common lisp package system
-- Sane restarts and condition system thanks to common lisp
-- Optional typing, optional dynamic scoping
-- Availability of optimizing compilers such as SBCL
-- Sensitive to newlines and semicolons but not to spaces and tabs (indentation insensitive)
-- Returning multiple values without an intermediate data structure
-- Support for rapid prototyping through CLOS and image-based development
-
-Here's a brief comparison of features across different languages.
-
-| *Features*                          |  *Moonli*  | *Common Lisp* |   *Julia*   |  *Haskell*  |     *Rust*     |  *Python*   | *Javascript* |     *C*     |
-|                                   |   <c>    |     <c>     |    <c>    |    <c>    |     <c>      |    <c>    |    <c>     |    <c>    |
-|-----------------------------------+----------+-------------+-----------+-----------+--------------+-----------+------------+-----------|
-| Syntax                            |    +     |      +      |     +     |     +     |     ---      |     +     |     -      |     -     |
-| Interactivity (Rapid Prototyping) |   High   |  Very High  | Moderate  |    Low    |     None     | Moderate  |  Moderate  |   None    |
-| Typing (Strong/Weak)              |  Strong  |   Strong    |  Strong   |  Strong   |    Strong    |  Strong   |    Weak    |   Weak    |
-| Typing (Static/Dynamic)           | Flexible |  Flexible   | Flexible  |  Static   |    Static    |  Dynamic  |  Dynamic   |  Dynamic  |
-| Typing (Expressivity)             | Flexible |  Flexible   | Moderate  | Very High |  Very High   |    Low    |    Low     |    Low    |
-| Compiler Speed                    | Flexible |  Flexible   |   Slow    | Moderate  |     Slow     | Moderate  |  Moderate  | Moderate  |
-| Runtime Speed                     | Flexible |  Flexible   |   Fast    | Moderate  |     Fast     |   Slow    |  Moderate  |   Fast    |
-| Runtime Error Recovery            | Advanced |  Advanced   |  Limited  | Moderate  |     None     | Moderate  |  Moderate  |   None    |
-| Binary Size                       | Flexible |  Flexible   |   Large   |     ?     |    Small     |   None    |    None    |   Small   |
-| User Extensibility                |   High   |    High     | Moderate  |    Low    |     Low      |   None    |    None    |   None    |
-| Compiler built-in optimizations   |   Low    |     Low     | Very High |     ?     |  Very High   |    Low    |  Moderate  | Very High |
-| Long Term Support                 |   Low    |  Very High  | Moderate  |     ?     |   Moderate   | Moderate  |    Low     | Very High |
-| Ecosystem (without interop)       |  Small   |    Small    | Moderate  |   Small   |   Moderate   |   Large   |   Large    |   Large   |
-| Memory Management                 |   Heap   |    Heap     | Reference |   Heap    | Compile Time | Reference |     ?      |  Manual   |
-
 * Installation
 :PROPERTIES:
 :CUSTOM_ID: installation
 :END:
 
-** Binaries - Trial Basis
+** Binaries
 :PROPERTIES:
-:CUSTOM_ID: binaries---trial-basis
+:CUSTOM_ID: binaries
 :END:
 
 Grab a binary from the [[https://github.com/digikar99/moonli/releases/latest][latest release]]. If you want an interactive REPL as in the above gif, grab the binaries with "cl-repl" in their name. 
@@ -307,45 +213,37 @@ The following should create a =cl-repl.moonli= binary in the root directory of m
 (asdf:make :moonli-repl)
 #+end_src
 
-* Plan
-:PROPERTIES:
-:CUSTOM_ID: plan
-:END:
 
-- DONE Real numbers, strings, characters, lists, infix arithmetic operators, literal hash-tables, literal hash-sets
-- DONE Typing using "expr::type" operator
-- DONE Support for declare and declaim
-- TODO Literal syntax for vectors, array access
-- DONE BODMAS rule for parsing expressions
-- DONE Binaries
-- TODO VS Code integration
-- TODO Emacs mode and integration with slime
-- DONE Infix Logical operators
-- TODO Add more forms: progn, mvb, dsb, let+, more...
-- TODO Add more tests
-- TODO Reverse transpile from common lisp
-
-* Syntax
+* A Short Tutorial
 :PROPERTIES:
 :CUSTOM_ID: syntax
 :END:
 
-As with lisp, everything is an expression.
+Moonli follows the idiom "everything is an expression". Thus, one does not need to worry about statements and expressions.
 
-Simple syntax table:
+The simplest moonli program consists of a single expression. For example, entering the string ="Hello, world!"= at the REPL will return the same value.
 
-| Lisp                     | Moonli                  |
-|--------------------------+-------------------------|
-| #\a                      | 'a'                     |
-| "hello world"            | "hello world"           |
-| 2, 2.0, 2d-3, 2.0d-3     | 2, 2.0, 2d-3, 2.0d-3    |
-| 'quoted-symbol           | $quoted-symbol          |
-| package:exported-symbol  | package:exported-symbol |
-| package::internal-symbol | <WONTDO>                |
-| (the type expr)          | expr :: type            |
-| (list form-1 form-2)     | (form-1, form-2)        |
-| (fn arg1 arg2)           | fn(arg1, arg2)          |
-| #c(re, im)               | <TODO>                  |
+#+begin_src
+MOONLI-USER> "Hello, world!"
+
+[OUT]: "Hello, world!"
+#+end_src
+
+You can also create a =tutorial.moonli= file with the contents
+
+#+begin_src
+"Hello, world!"
+#+end_src
+
+And then run it using =moonli tutorial.moonli=. You will note that it does not produce any output. The expression ~"Hello, world!"~ /evaluates/ to ="Hello, world!"=, but it does not write anything to the output. To write to the output, we can call the ~format~ function.
+
+#+begin_src
+MOONLI-USER> format(t, "Hello, world!")
+Hello, world!
+[OUT]: NIL
+#+end_src
+
+This writes to the output, but returns a value ~NIL~. This is a special value with multiple meanings, but essentially, it corresponds to "nothing".
 
 ** Global variables
 :PROPERTIES:
@@ -386,19 +284,6 @@ identity("hello world")
 function(identity)
 #+end_src
 
-Because lisp macros and functions follow similar syntax, moonli syntax for function calls can also be used for macro calls when the macro syntax is simple. (Indeed, this can be inconvenient; see [[defining your own]].)
-
-#+begin_src moonli
-destructuring-bind(a(b),(1,2),+(1,2))
-#+end_src
-
-transpiles to
-
-#+begin_src lisp
-(destructuring-bind (a b) (list 1 2)
-  (+ 1 2))
-#+end_src
-
 ** Functions
 :PROPERTIES:
 :CUSTOM_ID: functions
@@ -430,21 +315,6 @@ end
 }
 #+end_src
 
-transpiles to
-
-#+begin_src lisp
-(fill-hash-table (:a 2) ("b" 'progn))
-#+end_src
-
-which expands to
-
-#+begin_src lisp
-(let ((#:hash-table413 (make-hash-table :test #'equal :size 2)))
-  (setf (gethash :a #:hash-table413) 2
-        (gethash "b" #:hash-table413) 'progn)
-  #:hash-table413)
-#+end_src
-
 ** Sets or Hash-sets
 :PROPERTIES:
 :CUSTOM_ID: sets-or-hash-sets
@@ -452,22 +322,6 @@ which expands to
 
 #+begin_src moonli
 {:a, "b" , $cl:progn}
-#+end_src
-
-transpiles to
-
-#+begin_src lisp
-(fill-hash-set :a "b" 'progn)
-#+end_src
-
-which expands to
-
-#+begin_src lisp
-(let ((#:hash-set417 (make-hash-table :test #'equal :size 3)))
-  (setf (gethash :a #:hash-set417) t
-        (gethash "b" #:hash-set417) t
-        (gethash 'progn #:hash-set417) t)
-  #:hash-set417)
 #+end_src
 
 ** Infix operators
@@ -480,3 +334,168 @@ The following infix operators are recognized:
 - =+ - * / ^=
 - =or and not=
 - < <= == != >= > 
+
+** lm
+
+#+begin_src moonli
+lm (): nil
+
+lm (x): x
+
+lm (x, y): x + y
+#+end_src
+
+** declaim
+
+#+begin_src moonli
+declaim inline(foo)
+
+declaim type(hash-table, *map*)
+#+end_src
+
+** declare
+
+#+begin_src moonli
+declare type(single-float, x, y)
+
+declare type(single-float, x, y), optimize(debug(3))
+#+end_src
+
+** ifelse
+
+#+begin_src moonli
+ifelse a 5
+
+ifelse a :hello :bye
+#+end_src
+
+
+** lambda
+
+#+begin_src moonli
+lambda (): nil end
+
+lambda (x):
+  x
+end
+
+lambda (x, y):
+  let sum = x + y:
+    sum ^ 2
+  end
+end
+#+end_src
+
+** let+
+
+#+begin_src moonli
+let-plus:let+ x = 42: x
+end
+
+let-plus:let+ (a,b) = list(1,2):
+  a + b
+end
+
+let-plus:let+ let-plus:&values(a,b) = list(1,2):
+  a + b
+end
+
+let-plus:let+
+  let-plus:&values(a,b) = list(1,2),
+  (c,d,e) = list(1,2,3):
+  {a,b,c,d,e}
+end
+#+end_src
+
+** loop
+
+#+begin_src moonli
+loop end loop
+
+loop :repeat n :do
+  print("hello")
+end
+
+loop :for i :below n :do
+  print(i + 1)
+end
+#+end_src
+
+** defun
+
+#+begin_src moonli
+defun our-identity(x): x end
+
+defun add (&rest, args):
+ args
+end defun
+
+defun add(args):
+  if null(args):
+    0
+  else:
+    first(args) + add(rest(args))
+  end if
+end
+
+defun foo(&optional, a = 5): a end
+#+end_src
+
+** if
+
+#+begin_src moonli
+if a: b end if
+
+if a:
+  b; c
+end
+
+if a: b
+else: c
+end if
+
+if a:
+   b; d
+else:
+   c; e
+end if
+
+if a: b
+elif c: d; e
+else: f
+end if
+
+(if a: b else: c; end)::boolean
+
+if null(args): 0; else: 1 end
+
+if null(args):
+    0
+else:
+    first(args)
+end if
+
+if null(args):
+  0
+else:
+  2 + 3
+end if
+
+if null(args):
+  0
+else:
+  first(args) + add(rest(args))
+end if
+#+end_src
+
+** let
+
+#+begin_src moonli
+let a = 2, b = 3:
+   a + b
+end
+
+let a = 2, b = 3:
+   a + b
+end let
+#+end_src
