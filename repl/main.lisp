@@ -116,11 +116,11 @@ ___  ___                      _  _  ______  _____ ______  _
       (when show-logo
         (format t (color *logo-color* *logo* :prompt-chars nil)))
       (format t "~a~%~a~%~a~2%" *versions* *copy* *maintain*))
-    (in-package :cl-user)
     (unwind-protect
-         (let ((*debugger-hook* (if *debugger-enabled-p*
-                                    #'debugger
-                                    #'display-error-without-debugging)))
+         (let* ((*package* (find-package :moonli-user))
+                (*debugger-hook* (if *debugger-enabled-p*
+                                     #'debugger
+                                     #'display-error-without-debugging)))
            (repl))
       (save-history)
       (rl:deprep-terminal))
