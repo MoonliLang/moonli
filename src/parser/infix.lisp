@@ -51,7 +51,8 @@
                  "or"
                  +whitespace/internal
                  conjunction)))
-  (:function process-nary-infix-expression))
+  (:function process-nary-infix-expression)
+  (:error-report nil))
 
 (esrap:defrule conjunction
     (and optional-negation

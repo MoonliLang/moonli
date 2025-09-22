@@ -24,17 +24,17 @@
                `(,(first expr) ,(fifth expr)))))
 
 (esrap:defrule expr:hash-table
-    (or (and #\{ *whitespace #\})
-        (and #\{
+    (or (and "{" *whitespace "}")
+        (and "{"
              *whitespace
              hash-table-entry
              *whitespace
-             (* (and #\, *whitespace hash-table-entry *whitespace))
-             #\})
-        (and #\{
+             (* (and "," *whitespace hash-table-entry *whitespace))
+             "}")
+        (and "{"
              (+ (and *whitespace hash-table-entry
-                     *whitespace #\,))
-             #\}))
+                     *whitespace ","))
+             "}"))
   (:function (lambda (expr)
                (let ((key-value-pairs
                        (if (null (cdddr expr)) ; length = 3, first or last
@@ -67,15 +67,15 @@
            ,hs))))
 
 (esrap:defrule expr:hash-set
-    (or (and #\{
+    (or (and "{"
              moonli-expression
              *whitespace
-             (* (and #\, *whitespace moonli-expression *whitespace))
-             #\})
-        (and #\{
+             (* (and "," *whitespace moonli-expression *whitespace))
+             "}")
+        (and "{"
              (+ (and *whitespace moonli-expression
-                     *whitespace #\,))
-             #\}))
+                     *whitespace ","))
+             "}"))
   (:function (lambda (expr)
                (let ((members
                        (if (null (cdddr expr)) ; length = 3, second

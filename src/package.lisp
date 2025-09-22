@@ -4,6 +4,7 @@
            #:character
            #:list
            #:function-call
+           #:function-arglist
            #:hash-table
            #:hash-set
 

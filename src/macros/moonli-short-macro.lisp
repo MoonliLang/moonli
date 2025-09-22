@@ -90,7 +90,7 @@
 (define-moonli-short-macro lm
   ((lambda-list lambda-parameter-list)
    (_ *whitespace/internal)
-   (_ ":")
+   (_ mandatory-colon)
    (_ *whitespace/internal)
    (form moonli-expression))
   `(lambda ,lambda-list ,form))

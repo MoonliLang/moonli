@@ -2,37 +2,38 @@
 
 (5am:in-suite :moonli)
 
+(esrap:defrule let-binding
+    (and good-symbol
+         +whitespace
+         #\=
+         +whitespace
+         moonli-expression)
+  (:function (lambda (expr)
+               (list (let ((var-form (first expr)))
+                       (if (and (listp var-form)
+                                (eq 'list (first var-form)))
+                           (rest var-form)
+                           var-form))
+                     (fifth expr)))))
+
 (esrap:defrule let-bindings
-    (or (and (and good-symbol
-                  +whitespace
-                  #\=
-                  +whitespace
-                  moonli-expression
-                  *whitespace)
-             (* (and #\,
+    (or (and let-binding
+             (* (and mandatory-comma
                      +whitespace
-                     good-symbol
-                     +whitespace
-                     #\=
-                     +whitespace
-                     moonli-expression
+                     let-binding
                      *whitespace)))
         (* whitespace))
   (:function (lambda (expr)
                (if (null expr)
                    nil
-                   (cons (list (nth 0 (first expr))
-                               (nth 4 (first expr)))
-                         (mapcar (lambda (expr)
-                                   (list (nth 2 expr)
-                                         (nth 6 expr)))
-                                 (second expr)))))))
+                   (cons (first expr)
+                         (mapcar #'third (second expr)))))))
 
 (define-moonli-macro let
 
   ((let-bindings let-bindings)
    (_ *whitespace/internal)
-   (_ #\:)
+   (_ mandatory-colon)
    (let-body (esrap:? moonli)))
 
   `(let ,let-bindings
@@ -58,7 +59,7 @@ end let"))
          *whitespace
          moonli-expression
          *whitespace/internal
-         ":"
+         mandatory-colon
          moonli
          *whitespace)
   (:function (lambda (expr)
@@ -68,11 +69,11 @@ end let"))
 
 (define-moonli-macro if
   ((condition moonli-expression)
-   (_ (and *whitespace/internal ":" *whitespace))
+   (_ (and *whitespace/internal mandatory-colon *whitespace))
    (then-part moonli)
    (_ *whitespace)
    (elif-clauses (* elif-clause))
-   (_ (esrap:? (and *whitespace "else" *whitespace/internal ":" *whitespace)))
+   (_ (esrap:? (and *whitespace "else" *whitespace/internal mandatory-colon *whitespace)))
    (else-part (esrap:? moonli)))
   `(cond (,condition
           ,@(rest then-part))
@@ -301,7 +302,7 @@ end"))
 
 (esrap:defrule let+-bindings
     (or (and let+-binding
-             (* (and #\,
+             (* (and mandatory-comma
                      +whitespace
                      let+-binding
                      *whitespace)))
@@ -316,7 +317,7 @@ end"))
 (define-moonli-macro let-plus:let+
   ((let-bindings let+-bindings)
    (_ *whitespace)
-   (_ #\:)
+   (_ mandatory-colon)
    (let-body (esrap:? moonli)))
   `(let-plus:let+ ,let-bindings
      ,@(rest let-body)))
@@ -347,7 +348,7 @@ end"))
 (define-moonli-macro lambda
   ((lambda-list lambda-parameter-list)
    (_ *whitespace/internal)
-   (_ ":")
+   (_ mandatory-colon)
    (_ *whitespace/internal)
    (body (esrap:? moonli)))
   `(lambda ,lambda-list ,@(rest body)))

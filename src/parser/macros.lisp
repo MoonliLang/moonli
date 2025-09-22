@@ -19,6 +19,8 @@
                   (symbol-name name))
           '#:moonli/macro-predicates))
 
+
+
 (defmacro define-moonli-macro (name &body (moonli-macro-bindings . body))
   (alexandria:with-gensyms (expr subexpr args fn idx symbol)
     (let* ((namep (namep-symbol name))

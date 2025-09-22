@@ -14,6 +14,7 @@
   :components ((:file "package")
                (:module "parser"
                 :components ((:file "basic")
+                             (:file "mandatory")
                              (:file "number")
                              (:file "symbol")
                              (:file "hash-table-or-set")

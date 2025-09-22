@@ -40,12 +40,17 @@
                  ((list ":" symbol-name)
                   (intern symbol-name :keyword))
                  ((list symbol-name)
-                  (intern symbol-name))))))
+                  (intern symbol-name)))))
+  (:error-report :context))
 
 (defun good-symbol-p (symbol)
+  ;; Excluding these symbols is necessary, otherwise parser
+  ;; cannot tell whether this symbol appears as syntactic part of the
+  ;; expression or semantic
   (not (or (member symbol '(end elif else)
                    :test #'string-equal)
            (ignore-errors
             (parse-number:parse-number (symbol-name symbol))))))
 
-(esrap:defrule good-symbol (good-symbol-p expr:symbol))
+(esrap:defrule good-symbol (good-symbol-p expr:symbol)
+  (:error-report :context))

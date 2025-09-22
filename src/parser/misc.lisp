@@ -35,25 +35,46 @@
 (esrap:defrule string-designator
     (or string expr:symbol))
 
+(esrap:defrule mandatory-comma
+    (esrap:? #\,)
+  (:lambda (char esrap:&bounds start)
+    (if (and (stringp char)
+             (string= char ","))
+        ","
+        (error 'moonli-parse-error :expectation "," :position (1- start)))))
+
 (esrap:defrule expr:list
     (or (and #\( *whitespace #\))
         (and #\(
              *whitespace
              moonli-expression
              *whitespace
-             (+ (and #\, *whitespace moonli-expression *whitespace))
+             (+ (and mandatory-comma
+                     *whitespace
+                     moonli-expression
+                     *whitespace))
              #\))
         (and #\(
              (+ (and *whitespace
                      moonli-expression
-                     *whitespace #\, *whitespace))
+                     *whitespace
+                     mandatory-comma
+                     *whitespace))
              #\)))
   (:function (lambda (expr)
                (cons 'list
                      (if (null (cdddr expr)) ; length = 3, first or last
-                         (mapcar #'second (second expr))
+                         (mapcar (lambda (elt)
+                                   (optima:ematch elt
+                                     ((list _ expr _ _ _)
+                                      expr)))
+                                 (second expr))
                          (cons (third expr) ; middle
-                               (mapcar #'third (fifth expr))))))))
+                               (mapcar (lambda (elt)
+                                         (optima:ematch elt
+                                           ((list _ _ expr _)
+                                            expr)))
+                                       (fifth expr))))))))
 
 (5am:def-test expr:list ()
   (5am:is (equal '(list)
@@ -79,12 +100,15 @@
   (5am:is (equal '(list 3 (null a))
                  (esrap:parse 'expr:list "(3,null(a))"))))
 
+(esrap:defrule expr:function-arglist
+    (or (and #\( *whitespace moonli-expression *whitespace #\))
+        expr:list))
+
 (esrap:defrule expr:function-call
     ;; Don't put a whitespace
     ;; FIXME: Handle macros
     (and atomic-expression
-         (or (and #\( *whitespace moonli-expression *whitespace #\))
-             expr:list))
+         expr:function-arglist)
   (:function (lambda (expr)
                (cons (first expr)
                      (if (eq 'list (first (second expr)))
