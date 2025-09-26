@@ -36,11 +36,12 @@ Moonli is a beautiful programming language with a simple syntax and a very inter
   - [[#declare][declare]]
   - [[#ifelse][ifelse]]
   - [[#lambda][lambda]]
-  - [[#let][let+]]
+  - [[#let-pluslet][let-plus:let+]]
   - [[#loop][loop]]
   - [[#defun][defun]]
   - [[#if][if]]
-  - [[#let-0][let]]
+  - [[#let][let]]
+  - [[#forfor][for:for]]
 :END:
 
 
@@ -411,9 +412,9 @@ lambda (x, y):
 end
 #+end_src
 
-** let+
+** let-plus:let+
 :PROPERTIES:
-:CUSTOM_ID: let
+:CUSTOM_ID: let-pluslet
 :END:
 
 #+begin_src moonli
@@ -461,7 +462,7 @@ end
 defun our-identity(x): x end
 
 defun add (&rest, args):
- args
+  args
 end defun
 
 defun add(args):
@@ -527,7 +528,7 @@ end if
 
 ** let
 :PROPERTIES:
-:CUSTOM_ID: let-0
+:CUSTOM_ID: let
 :END:
 
 #+begin_src moonli
@@ -538,4 +539,19 @@ end
 let a = 2, b = 3:
    a + b
 end let
+#+end_src
+
+** for:for
+:PROPERTIES:
+:CUSTOM_ID: forfor
+:END:
+
+#+begin_src moonli
+for:for (i,j) in ((1,2),(3,4)):
+  print(i + j)
+end
+
+for:for i in (1,2,3), j in (2,3,4):
+  print(i + j)
+end
 #+end_src

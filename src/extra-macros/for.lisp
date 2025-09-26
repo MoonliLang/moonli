@@ -34,11 +34,11 @@
   (:lisp (for-minimal:for (((i j) in (list (list 1 2) (list 3 4))))
            (print (+ i j)))
    :moonli "for:for (i,j) in ((1,2),(3,4)):
- print(i + j)
- end")
+  print(i + j)
+end")
   (:lisp (for-minimal:for ((i in (list 1 2 3))
                            (j in (list 2 3 4)))
            (print (+ i j)))
    :moonli "for:for i in (1,2,3), j in (2,3,4):
- print(i + j)
- end"))
+  print(i + j)
+end"))
