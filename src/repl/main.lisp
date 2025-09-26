@@ -10,8 +10,8 @@ ___  ___                      _  _  ______  _____ ______  _
 \\_|  |_/ \\___/  \\___/ |_| |_||_||_| \\_| \\_|\\____/ \\_|    \\_____/
 ")
 
-(setf *copy* "(C) 2017-2018 TANI Kojiro <kojiro0531@gmail.com>")
-(setf *maintain* "Powered by: https://github.com/lisp-maintainers/cl-repl")
+(setf *copy* "Moonli (C) 2025 Shubhamkar Ayare")
+(setf *maintain* (format nil "CL-REPL (C) 2017-2018 TANI Kojiro~%  (Maintained by https://github.com/lisp-maintainers/cl-repl)"))
 
 (setf *read-function* 'moonli:read-moonli-from-string)
 (setf *line-continue-function*
