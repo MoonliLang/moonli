@@ -1,5 +1,7 @@
 (in-package :moonli)
 
+(defvar *moonli-parse-string*)
+
 (defun position-to-line-column (text position)
   (let ((line (count #\newline text :end position))
         (col  (- position

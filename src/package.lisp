@@ -22,17 +22,8 @@
            #:lambda))
 
 
-(uiop:define-package :moonli-user
-  (:use :cl :let-plus)
-  (:reexport :cl :let-plus)
-  (:export #:lm
-           #:ifelse))
-
 (defpackage :moonli
   (:use :cl)
-  (:import-from :moonli-user
-                #:lm
-                #:ifelse)
   (:export #:moonli
            #:moonli-expression
            #:read-moonli-from-stream
@@ -50,4 +41,3 @@
 
 (5am:def-suite :moonli)
 (5am:in-suite :moonli)
-

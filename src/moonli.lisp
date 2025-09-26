@@ -12,8 +12,6 @@
                 (setf readp nil)
                 (return expr)))))
 
-(defvar *moonli-parse-string*)
-
 (defun read-moonli-from-string (string)
   "NOTE: Some moonli forms like defpackage and in-package can have side-effects."
   (let ((end (length string))
