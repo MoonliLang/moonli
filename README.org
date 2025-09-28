@@ -8,6 +8,10 @@ If you are a lisper, see [[file:README-CL.org]].
 
 Moonli is a beautiful programming language with a simple syntax and a very interactive development experience. This enables rapidly prototyping new programs. At the same time, once a prototype is ready, the programs can also be optimized for runtime performance as well as long term maintenance.
 
+#+attr_html: :width 640px :href
+[[https://www.youtube.com/watch?v=LFc8_3iJFBA][file:repl.png]]
+
+
 * Table of Contents
 :PROPERTIES:
 :TOC:      :include all :depth 3 :ignore this
