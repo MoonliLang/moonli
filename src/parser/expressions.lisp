@@ -9,16 +9,16 @@
         expr:character
         string
         good-symbol
-        number))
-
-(esrap:defrule moonli-expression
-    (or macro-call
-        short-macro-call
-        infix-expression
+        number
         expr:vector
         expr:list
         expr:hash-table
         expr:hash-set))
+
+(esrap:defrule moonli-expression
+    (or macro-call
+        short-macro-call
+        infix-expression))
 
 (esrap:defrule moonli-expression/whitespace
     (and *whitespace

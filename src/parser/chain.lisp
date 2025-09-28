@@ -60,6 +60,8 @@
   (:lisp (funcall (aref (a) i j))
    :moonli "a()[i,j]()")
   (:lisp (aref a i j)
-   :moonli "a[i,j]"))
+   :moonli "a[i,j]")
+  (:lisp (aref (vector 1 2 3) 0)
+   :moonli "[1,2,3][0]"))
 
 
