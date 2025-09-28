@@ -3,6 +3,7 @@
   (:export #:symbol
            #:character
            #:list
+           #:vector
            #:function-call
            #:function-arglist
            #:hash-table

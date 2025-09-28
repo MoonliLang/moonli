@@ -4,7 +4,7 @@
 
 (esrap:defrule atomic-expression
     (or bracketed-expression
-        expr:function-call
+        chain
         quoted-expression
         expr:character
         string
@@ -15,6 +15,7 @@
     (or macro-call
         short-macro-call
         infix-expression
+        expr:vector
         expr:list
         expr:hash-table
         expr:hash-set))

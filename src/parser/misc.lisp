@@ -99,24 +99,3 @@
                  (esrap:parse 'expr:list "(3, :hello, )")))
   (5am:is (equal '(list 3 (null a))
                  (esrap:parse 'expr:list "(3,null(a))"))))
-
-(esrap:defrule expr:function-arglist
-    (or (and #\( *whitespace moonli-expression *whitespace #\))
-        expr:list))
-
-(esrap:defrule expr:function-call
-    ;; Don't put a whitespace
-    ;; FIXME: Handle macros
-    (and atomic-expression
-         expr:function-arglist)
-  (:function (lambda (expr)
-               (cons (first expr)
-                     (if (eq 'list (first (second expr)))
-                         (rest (second expr))
-                         (cons (third (second expr)) nil))))))
-
-"
-begin let a=3, b=5:
-  a+b
-end
-"

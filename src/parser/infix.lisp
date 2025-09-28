@@ -38,7 +38,7 @@
         disjunction))
 
 (esrap:defrule assignment
-    (and (or expr:function-call expr:symbol)
+    (and chain
          +whitespace/internal
          "="
          +whitespace/internal

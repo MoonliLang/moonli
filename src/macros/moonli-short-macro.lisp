@@ -43,11 +43,11 @@
     (delete-package "MOONLI/TEST/IN-PACKAGE")))
 
 (define-moonli-short-macro declare
-  ((decl-specs (and expr:function-call
+  ((decl-specs (and chain
                     (* (and *whitespace/internal
                             #\,
                             *whitespace/internal
-                            expr:function-call)))))
+                            chain)))))
   `(declare ,(first decl-specs)
             ,@(mapcar #'fourth (second decl-specs))))
 
@@ -55,15 +55,15 @@
   (:lisp (declare (type single-float x y))
    :moonli "declare type(single-float, x, y)")
   (:lisp (declare (type single-float x y)
-                   (optimize (debug 3)))
+                  (optimize (debug 3)))
    :moonli "declare type(single-float, x, y), optimize(debug(3))"))
 
 (define-moonli-short-macro declaim
-  ((decl-specs (and expr:function-call
+  ((decl-specs (and chain
                     (* (and *whitespace/internal
                             #\,
                             *whitespace/internal
-                            expr:function-call)))))
+                            chain)))))
   `(declaim ,(first decl-specs)
             ,@(mapcar #'fourth (second decl-specs))))
 

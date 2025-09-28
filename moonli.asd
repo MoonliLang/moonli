@@ -12,6 +12,7 @@
   :pathname #p"src/"
   :serial t
   :components ((:file "package")
+               (:file "testdoc")
                (:module "parser"
                 :components ((:file "basic")
                              (:file "mandatory")
@@ -21,10 +22,11 @@
                              (:file "macros")
                              (:file "misc")
                              (:file "infix")
+                             (:file "vector")
+                             (:file "chain")
                              (:file "expressions")))
                (:module "macros"
-                :components ((:file "testdoc")
-                             (:file "moonli-macro")
+                :components ((:file "moonli-macro")
                              (:file "moonli-short-macro")))
                (:file "moonli")
                (:file "binary"))
