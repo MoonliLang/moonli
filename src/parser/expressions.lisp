@@ -27,15 +27,14 @@
   (:function second))
 
 (esrap:defrule moonli
-    (and (* (or whitespace/internal whitespace/end))
+    (and *whitespace/all
          (and moonli-expression
-              (* (or whitespace/internal)))
-         (* (and (* whitespace/end)
-                 (* (or whitespace/internal whitespace/end))
+              *whitespace/internal)
+         (* (and *whitespace/all
                  moonli-expression
-                 (* whitespace/internal)))
-         (* (or whitespace/internal whitespace/end)))
+                 *whitespace/internal))
+         *whitespace/all)
   (:function (lambda (exprs)
                `(progn
                   ,(first (second exprs))
-                  ,@(mapcar #'third (third exprs))))))
+                  ,@(mapcar #'second (third exprs))))))
