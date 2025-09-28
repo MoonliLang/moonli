@@ -1,12 +1,13 @@
 (defsystem "moonli-repl"
-  :depends-on ("moonli"
+  :depends-on ("uiop"
+               "moonli"
                "cl-repl"
                "let-plus"
                "for"
                "com.inuoe.jzon"
                "parse-float")
   :build-operation "program-op"
-  :build-pathname "moonli.repl"
+  :build-pathname "../moonli.repl"
   :entry-point "cl-repl:main"
   :pathname #p"src/"
   :components ((:file "repl/package")
