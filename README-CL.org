@@ -30,9 +30,6 @@ transpiles to:
 
 See [[./moonli-sample.asd]] and [[./sample/sample.moonli]] to include in your project.
 
-#+attr_html: :width 640px
-[[./repl/repl.gif]]
-
 * Table of Contents
 :PROPERTIES:
 :TOC:      :include all :depth 4 :ignore this

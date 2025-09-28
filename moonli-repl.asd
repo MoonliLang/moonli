@@ -8,7 +8,6 @@
   :build-operation "program-op"
   :build-pathname "moonli.repl"
   :entry-point "cl-repl:main"
-  :depends-on ()
   :pathname #p"src/"
   :components ((:file "repl/package")
                (:module "extra-macros"

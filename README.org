@@ -59,7 +59,7 @@ Moonli is a beautiful programming language with a simple syntax and a very inter
 :CUSTOM_ID: binaries
 :END:
 
-Grab a binary from the [[https://github.com/digikar99/moonli/releases/latest][latest release]]. If you want an interactive REPL as in the above gif, grab the binaries with "repl" in their name. 
+Grab a binary from the [[https://github.com/digikar99/moonli/releases/latest][latest release]]. If you want an interactive REPL as in the above gif, grab the binaries with "repl" in their name.
 
 If you want to run a few moonli files, grab the regular binaries.
 
@@ -87,7 +87,7 @@ Mac OS: [[https://brew.sh/][brew]]
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 #+end_src
 
-Windows: 
+Windows:
 
 - [[https://www.msys2.org/][MSYS2]]: this will install the =pacman= package manager
 - Or [[https://chocolatey.org/install][choco]]
@@ -348,7 +348,7 @@ The following infix operators are recognized:
 
 - =+ - * / ^=
 - =or and not=
-- < <= == != >= > 
+- < <= == != >= >
 
 ** lm
 :PROPERTIES:
