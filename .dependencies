@@ -1,2 +1,3 @@
+("asdf" :git "https://gitlab.common-lisp.net/asdf/asdf.git")
 ("cl-repl" :git "https://github.com/lisp-maintainers/cl-repl")
 ("peltadot" :git "https://gitlab.com/digikar/peltadot")
