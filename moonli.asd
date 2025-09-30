@@ -61,3 +61,9 @@
                              (:file "let-plus")
                              (:file "for")))
                (:file "repl/main")))
+
+(defsystem "moonli/alive-lsp"
+  :pathname #p"src/"
+  :depends-on ("moonli"
+               "alive-lsp")
+  :components ((:file "alive-lsp")))

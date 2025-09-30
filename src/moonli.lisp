@@ -1,16 +1,10 @@
 (in-package :moonli)
 
 (defun read-moonli-from-stream (stream)
-  (loop :with text := ""
-        :with readp := t
-        :while readp
-        :do (multiple-value-bind (expr errorp)
-                (ignore-errors
-                 (read-moonli-from-string
-                  (setf text (uiop:strcat text (read-line stream) #\newline))))
-              (unless errorp
-                (setf readp nil)
-                (return expr)))))
+  (read-moonli-from-string
+   (with-output-to-string (*standard-output*)
+     (loop :while (listen stream)
+           :do (write-char (read-char stream))))))
 
 (defun read-moonli-from-string (string)
   "NOTE: Some moonli forms like defpackage and in-package can have side-effects."
@@ -30,6 +24,14 @@
                 (setf pos (or (nth-value 1 (esrap:parse '*whitespace/all string :start pos :junk-allowed t))
                               end))))
     `(progn ,@(nreverse exprs))))
+
+(defun moonli-string-to-lisp-string (string)
+  (let ((lisp-expr (ignore-errors (read-moonli-from-string string))))
+    (if lisp-expr
+        (with-output-to-string (*standard-output*)
+          (dolist (form (rest lisp-expr))
+            (write form :case :downcase)))
+        string)))
 
 (defun load-moonli-file (moonli-file &key (transpile t))
   (assert (string= "moonli" (pathname-type moonli-file)))
