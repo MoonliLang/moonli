@@ -40,8 +40,8 @@
 
 (defsystem "moonli/asdf"
   :depends-on ("moonli")
-  :pathname #p"src/asdf/"
-  :components ((:file "moonli-asdf")))
+  :pathname #p"src/"
+  :components ((:file "asdf")))
 
 (defsystem "moonli/repl"
   :depends-on ("uiop"
